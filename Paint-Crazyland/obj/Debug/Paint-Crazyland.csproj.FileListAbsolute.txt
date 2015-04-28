@@ -1,0 +1,10 @@
+F:\CODE\Paint-Crazyland\Paint-Crazyland\bin\Debug\Paint-Crazyland.exe.config
+F:\CODE\Paint-Crazyland\Paint-Crazyland\bin\Debug\Paint-Crazyland.exe
+F:\CODE\Paint-Crazyland\Paint-Crazyland\bin\Debug\Paint-Crazyland.pdb
+F:\CODE\Paint-Crazyland\Paint-Crazyland\bin\Debug\System.Windows.Forms.Ribbon35.dll
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint_Crazyland.Form1.resources
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint_Crazyland.Properties.Resources.resources
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint-Crazyland.csproj.GenerateResource.Cache
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint-Crazyland.exe
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint-Crazyland.pdb
+F:\CODE\Paint-Crazyland\Paint-Crazyland\obj\Debug\Paint-Crazyland.csprojResolveAssemblyReference.cache
