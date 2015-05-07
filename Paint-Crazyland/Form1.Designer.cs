@@ -65,6 +65,9 @@
             this.m_btEraser = new Paint_Crazyland.ButtonFlat();
             this.m_btMarquee = new Paint_Crazyland.ButtonFlat();
             this.m_propertiesBar = new System.Windows.Forms.Panel();
+            this.m_tbSides = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.m_btFont = new Paint_Crazyland.ButtonFlat();
             this.m_lbShapes = new System.Windows.Forms.Label();
             this.m_cbShapes = new System.Windows.Forms.ComboBox();
             this.m_lbColorPicker = new System.Windows.Forms.Label();
@@ -75,6 +78,8 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.m_workSpace = new System.Windows.Forms.PictureBox();
+            this.m_tbTextTool = new System.Windows.Forms.TextBox();
+            this.fontDialog1 = new System.Windows.Forms.FontDialog();
             this.menuStrip1.SuspendLayout();
             this.m_toolBar.SuspendLayout();
             this.m_propertiesBar.SuspendLayout();
@@ -549,6 +554,9 @@
             this.m_propertiesBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_propertiesBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.m_propertiesBar.Controls.Add(this.m_tbSides);
+            this.m_propertiesBar.Controls.Add(this.label2);
+            this.m_propertiesBar.Controls.Add(this.m_btFont);
             this.m_propertiesBar.Controls.Add(this.m_lbShapes);
             this.m_propertiesBar.Controls.Add(this.m_cbShapes);
             this.m_propertiesBar.Controls.Add(this.m_lbColorPicker);
@@ -559,6 +567,51 @@
             this.m_propertiesBar.Name = "m_propertiesBar";
             this.m_propertiesBar.Size = new System.Drawing.Size(1000, 39);
             this.m_propertiesBar.TabIndex = 3;
+            // 
+            // m_tbSides
+            // 
+            this.m_tbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_tbSides.Location = new System.Drawing.Point(655, 5);
+            this.m_tbSides.Multiline = true;
+            this.m_tbSides.Name = "m_tbSides";
+            this.m_tbSides.Size = new System.Drawing.Size(60, 29);
+            this.m_tbSides.TabIndex = 16;
+            this.m_tbSides.Text = "3";
+            this.m_tbSides.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(600, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 20);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Sides";
+            // 
+            // m_btFont
+            // 
+            this.m_btFont.AlphaGlow = 40F;
+            this.m_btFont.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(208)))), ((int)(((byte)(136)))));
+            this.m_btFont.ButtonImage = null;
+            this.m_btFont.ButtonText = "Font";
+            this.m_btFont.DeltaAlphaGlow = 2F;
+            this.m_btFont.DeltaDistance = 2F;
+            this.m_btFont.HaveEffects = false;
+            this.m_btFont.ImageOrigin = new System.Drawing.Point(0, 0);
+            this.m_btFont.ImageSize = new System.Drawing.Size(100, 100);
+            this.m_btFont.IsChosen = false;
+            this.m_btFont.Location = new System.Drawing.Point(497, 7);
+            this.m_btFont.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
+            this.m_btFont.Name = "m_btFont";
+            this.m_btFont.SaveChanged = false;
+            this.m_btFont.ShadownDistance = 6;
+            this.m_btFont.Size = new System.Drawing.Size(83, 23);
+            this.m_btFont.TabIndex = 9;
+            this.m_btFont.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Center;
+            this.m_btFont.TextColor = System.Drawing.Color.White;
+            this.m_btFont.TextOrigin = new System.Drawing.Point(0, 0);
+            this.m_btFont.Click += new System.EventHandler(this.m_btFont_Click);
             // 
             // m_lbShapes
             // 
@@ -576,8 +629,7 @@
             this.m_cbShapes.Items.AddRange(new object[] {
             "Line",
             "Polygon",
-            "Ellipse",
-            "Rectangle"});
+            "Ellipse"});
             this.m_cbShapes.Location = new System.Drawing.Point(336, 8);
             this.m_cbShapes.Name = "m_cbShapes";
             this.m_cbShapes.Size = new System.Drawing.Size(121, 21);
@@ -606,7 +658,7 @@
             this.m_btColorPickerShow.ImageOrigin = new System.Drawing.Point(0, 0);
             this.m_btColorPickerShow.ImageSize = new System.Drawing.Size(40, 40);
             this.m_btColorPickerShow.IsChosen = false;
-            this.m_btColorPickerShow.Location = new System.Drawing.Point(220, 1);
+            this.m_btColorPickerShow.Location = new System.Drawing.Point(220, 2);
             this.m_btColorPickerShow.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
             this.m_btColorPickerShow.Name = "m_btColorPickerShow";
             this.m_btColorPickerShow.SaveChanged = false;
@@ -616,6 +668,7 @@
             this.m_btColorPickerShow.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Bot;
             this.m_btColorPickerShow.TextColor = System.Drawing.Color.White;
             this.m_btColorPickerShow.TextOrigin = new System.Drawing.Point(0, 0);
+            this.m_btColorPickerShow.Click += new System.EventHandler(this.m_btColorPickerShow_Click);
             // 
             // m_tbSize
             // 
@@ -655,16 +708,28 @@
             this.m_workSpace.TabStop = false;
             this.m_workSpace.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_workSpace_MouseClick);
             // 
+            // m_tbTextTool
+            // 
+            this.m_tbTextTool.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.m_tbTextTool.Location = new System.Drawing.Point(357, 128);
+            this.m_tbTextTool.Multiline = true;
+            this.m_tbTextTool.Name = "m_tbTextTool";
+            this.m_tbTextTool.Size = new System.Drawing.Size(100, 23);
+            this.m_tbTextTool.TabIndex = 8;
+            this.m_tbTextTool.Visible = false;
+            this.m_tbTextTool.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbTextTool_KeyPress);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(1000, 490);
+            this.Controls.Add(this.m_tbTextTool);
+            this.Controls.Add(this.m_workSpace);
             this.Controls.Add(this.m_propertiesBar);
             this.Controls.Add(this.m_toolBar);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.m_workSpace);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -732,6 +797,11 @@
         private System.Windows.Forms.PictureBox m_workSpace;
         private System.Windows.Forms.ComboBox m_cbShapes;
         private System.Windows.Forms.Label m_lbShapes;
+        private System.Windows.Forms.TextBox m_tbTextTool;
+        private System.Windows.Forms.FontDialog fontDialog1;
+        private ButtonFlat m_btFont;
+        private System.Windows.Forms.TextBox m_tbSides;
+        private System.Windows.Forms.Label label2;
     }
 }
 
