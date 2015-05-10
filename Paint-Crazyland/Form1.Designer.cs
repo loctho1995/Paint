@@ -54,6 +54,9 @@
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.m_toolBar = new System.Windows.Forms.Panel();
             this.m_propertiesBar = new System.Windows.Forms.Panel();
+            this.m_lbZoom = new System.Windows.Forms.Label();
+            this.m_tbZoomValue = new System.Windows.Forms.TextBox();
+            this.m_tbZoom = new System.Windows.Forms.TrackBar();
             this.m_tbSides = new System.Windows.Forms.TextBox();
             this.m_lbSides = new System.Windows.Forms.Label();
             this.m_lbShapes = new System.Windows.Forms.Label();
@@ -67,9 +70,6 @@
             this.m_workSpace = new System.Windows.Forms.PictureBox();
             this.m_tbTextTool = new System.Windows.Forms.TextBox();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.m_tbZoom = new System.Windows.Forms.TrackBar();
-            this.m_tbZoomValue = new System.Windows.Forms.TextBox();
-            this.m_lbZoom = new System.Windows.Forms.Label();
             this.m_btFont = new Paint_Crazyland.ButtonFlat();
             this.m_btColorPickerShow = new Paint_Crazyland.ButtonFlat();
             this.m_btLeftColor = new Paint_Crazyland.ButtonFlat();
@@ -85,8 +85,8 @@
             this.menuStrip1.SuspendLayout();
             this.m_toolBar.SuspendLayout();
             this.m_propertiesBar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.m_workSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_tbZoom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.m_workSpace)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -309,6 +309,39 @@
             this.m_propertiesBar.Size = new System.Drawing.Size(1000, 39);
             this.m_propertiesBar.TabIndex = 3;
             // 
+            // m_lbZoom
+            // 
+            this.m_lbZoom.AutoSize = true;
+            this.m_lbZoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbZoom.Location = new System.Drawing.Point(515, 8);
+            this.m_lbZoom.Name = "m_lbZoom";
+            this.m_lbZoom.Size = new System.Drawing.Size(50, 20);
+            this.m_lbZoom.TabIndex = 19;
+            this.m_lbZoom.Text = "Zoom";
+            // 
+            // m_tbZoomValue
+            // 
+            this.m_tbZoomValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_tbZoomValue.Location = new System.Drawing.Point(571, 4);
+            this.m_tbZoomValue.Multiline = true;
+            this.m_tbZoomValue.Name = "m_tbZoomValue";
+            this.m_tbZoomValue.Size = new System.Drawing.Size(67, 28);
+            this.m_tbZoomValue.TabIndex = 18;
+            this.m_tbZoomValue.Text = "100";
+            this.m_tbZoomValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.m_tbZoomValue.TextChanged += new System.EventHandler(this.m_tbZoomValue_TextChanged);
+            // 
+            // m_tbZoom
+            // 
+            this.m_tbZoom.AutoSize = false;
+            this.m_tbZoom.Location = new System.Drawing.Point(644, 5);
+            this.m_tbZoom.Maximum = 400;
+            this.m_tbZoom.Name = "m_tbZoom";
+            this.m_tbZoom.Size = new System.Drawing.Size(175, 29);
+            this.m_tbZoom.TabIndex = 17;
+            this.m_tbZoom.TickFrequency = 4;
+            this.m_tbZoom.Scroll += new System.EventHandler(this.m_tbZoom_Scroll);
+            // 
             // m_tbSides
             // 
             this.m_tbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -411,40 +444,6 @@
             this.m_tbTextTool.TabIndex = 8;
             this.m_tbTextTool.Visible = false;
             this.m_tbTextTool.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbTextTool_KeyPress);
-            // 
-            // m_tbZoom
-            // 
-            this.m_tbZoom.AutoSize = false;
-            this.m_tbZoom.Location = new System.Drawing.Point(644, 5);
-            this.m_tbZoom.Maximum = 400;
-            this.m_tbZoom.Name = "m_tbZoom";
-            this.m_tbZoom.Size = new System.Drawing.Size(175, 29);
-            this.m_tbZoom.TabIndex = 17;
-            this.m_tbZoom.TickFrequency = 4;
-            this.m_tbZoom.Value = 100;
-            this.m_tbZoom.Scroll += new System.EventHandler(this.m_tbZoom_Scroll);
-            // 
-            // m_tbZoomValue
-            // 
-            this.m_tbZoomValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_tbZoomValue.Location = new System.Drawing.Point(571, 4);
-            this.m_tbZoomValue.Multiline = true;
-            this.m_tbZoomValue.Name = "m_tbZoomValue";
-            this.m_tbZoomValue.Size = new System.Drawing.Size(67, 28);
-            this.m_tbZoomValue.TabIndex = 18;
-            this.m_tbZoomValue.Text = "100";
-            this.m_tbZoomValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.m_tbZoomValue.TextChanged += new System.EventHandler(this.m_tbZoomValue_TextChanged);
-            // 
-            // m_lbZoom
-            // 
-            this.m_lbZoom.AutoSize = true;
-            this.m_lbZoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbZoom.Location = new System.Drawing.Point(515, 8);
-            this.m_lbZoom.Name = "m_lbZoom";
-            this.m_lbZoom.Size = new System.Drawing.Size(50, 20);
-            this.m_lbZoom.TabIndex = 19;
-            this.m_lbZoom.Text = "Zoom";
             // 
             // m_btFont
             // 
@@ -753,8 +752,8 @@
             this.m_toolBar.ResumeLayout(false);
             this.m_propertiesBar.ResumeLayout(false);
             this.m_propertiesBar.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.m_workSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.m_tbZoom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.m_workSpace)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

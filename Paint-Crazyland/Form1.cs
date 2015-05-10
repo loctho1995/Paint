@@ -116,7 +116,14 @@ namespace Paint_Crazyland
         {
             try
             {
-                float val = float.Parse(m_tbZoomValue.Text) / 100;
+                if (float.Parse(m_tbZoomValue.Text) < 100)
+                {
+                    m_tbZoomValue.Text = "100";
+                    m_tbZoom.Value = 0;
+                }                    
+
+                float val = (float.Parse(m_tbZoomValue.Text)) / 100;
+                m_lbZoom.Text = val.ToString();
                 m_bmWorkSpace = new Bitmap(m_bmSave, (int)(m_bmSave.Width * val), (int)(m_bmSave.Height * val));
                 m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
                 m_workSpace.Size = m_bmWorkSpace.Size;
@@ -702,6 +709,9 @@ namespace Paint_Crazyland
             m_tbZoom.Visible = false;
             m_tbZoomValue.Visible = false;
 
+            if (CurrentTool != Tools.Zoom)
+                m_isFistTimeZoom = true;
+
             if (CurrentTool != Tools.Marquee)
             {
                 if(m_isMarqueeFinish)
@@ -978,7 +988,7 @@ namespace Paint_Crazyland
 
         private void m_tbZoom_Scroll(object sender, EventArgs e)
         {
-            m_tbZoomValue.Text = m_tbZoom.Value.ToString();
+            m_tbZoomValue.Text = (m_tbZoom.Value + 100).ToString();
             Zoom();
         }
 
