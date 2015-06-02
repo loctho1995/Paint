@@ -26,6 +26,7 @@ namespace Paint_Crazyland
 
         bool    m_isMouseDown, 
                 m_isMouseUp, 
+                m_isKeyDown, // true khi Keydown
                 m_isMouseUpMarqueeShow, // cho phep ve anh Demo len khi Lan dau xac dinh marquee
                 m_isMarqueeChosing, // = true khi dang duoc ve len
                 m_isMarqueeChosen, // khi marquee da dc xac dinh va cho phep nhap giu chuot de di chuyen vung chon
@@ -42,15 +43,19 @@ namespace Paint_Crazyland
                 m_bmMarquee, // dung de xac dinh vung Marquee
                 m_bmSave; // bimap save kich co ban dau cua workspace (sau khi resize)
 
+        Keys m_keys;
         Rectangle m_rectMarquee; 
 
         Pen m_leftPen, m_rightPen;
         Point m_mouseLocation, m_mouseFixedLocation;
         Point[] m_points;
-        List<Point> m_listMouseLocation;
+        List<Point> m_listMouseLocation, //danh sach cac vi tri cua mouse (torng mouse move)
+                    m_listPointFill, //danh sach cac vi tri fill 
+                    m_listCallBackPoint; //danh sach cac vi tri can xet lai trong fill
         Graphics m_gpTemp;
         MouseButtons m_mouseButton;
         int m_grid = 15; //gioi han size khi re chuot vao resize workspace
+        int[,] m_arrayCheckFill; // kiem tra nhung vi tri da fill
 
         public Form1()
         {
@@ -70,8 +75,7 @@ namespace Paint_Crazyland
             m_leftColor = m_btLeftColor.BackColor;
             m_rightColor = m_btRightColor.BackColor;
 
-            CurrentTool = Tools.None;
-            ActiveTool();
+            CurrentTool = Tools.None;           
 
             m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
             m_bmTemp = new Bitmap(m_workSpace.Width, m_workSpace.Height);
@@ -79,8 +83,18 @@ namespace Paint_Crazyland
             m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
             m_gpTemp.FillRectangle(Brushes.White, new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height));
             m_listMouseLocation = new List<Point>();
+            m_listPointFill = new List<Point>();
+            m_listCallBackPoint = new List<Point>();
             m_points = new Point[1];
 
+            this.KeyPreview = true;
+            this.KeyDown += (o, e) =>
+                {
+                    m_isKeyDown = true;
+                    m_keys = e.KeyCode;
+                };
+
+            ActiveTool();
             PensChanged();
         }
 
@@ -135,6 +149,361 @@ namespace Paint_Crazyland
             }
         }
 
+        //cho phep an/hien cac option can thiet
+        void ActiveTool()
+        {
+            m_btColorPickerShow.Visible = false;
+            m_lbColorPicker.Visible = false;
+            m_lbShapes.Visible = false;
+            m_cbShapes.Visible = false;
+            m_btFont.Visible = false;
+            m_tbSides.Visible = false;
+            m_lbSize.Visible = false;
+            m_tbSize.Visible = false;
+            m_lbSides.Visible = false;
+            m_lbZoom.Visible = false;
+            m_tbZoom.Visible = false;
+            m_tbZoomValue.Visible = false;
+
+            if (CurrentTool != Tools.Zoom)
+                m_isFistTimeZoom = true;
+
+            if (CurrentTool != Tools.Marquee)
+            {
+                if (m_isMarqueeFinish)
+                {
+                    m_gpTemp.DrawImage(m_bmMarquee, m_rectMarquee);
+
+                    m_rectMarquee = Rectangle.Empty;
+                    m_bmMarquee = null;
+
+                    m_isMarqueeFinish = false;
+                    m_isMarqueeChosing = false;
+                    m_isMarqueeChosen = false;
+                    m_isMouseUpMarqueeShow = false;
+                    m_workSpace.Invalidate();
+                }
+            }
+
+            switch (CurrentTool)
+            {
+                case Tools.Brush:
+                    m_lbSize.Visible = true;
+                    m_tbSize.Visible = true;
+                    break;
+
+                case Tools.Eraser:
+                    m_lbSize.Visible = true;
+                    m_tbSize.Visible = true;
+                    break;
+
+                case Tools.Marquee:
+                    break;
+
+                case Tools.Zoom:
+                    m_lbZoom.Visible = true;
+                    m_tbZoom.Visible = true;
+                    m_tbZoomValue.Visible = true;
+
+                    m_lbZoom.Location = m_lbSize.Location;
+                    m_tbZoomValue.Location = new Point(m_lbZoom.Location.X + m_lbZoom.Width, m_tbZoomValue.Location.Y);
+                    m_tbZoom.Location = new Point(m_tbZoomValue.Location.X + m_tbZoomValue.Width, m_tbZoom.Location.Y);
+
+                    if (m_isFistTimeZoom)
+                    {
+                        m_isFistTimeZoom = false;
+                        m_bmSave = new Bitmap(m_bmWorkSpace, m_bmSave.Size);
+                    }
+                    break;
+
+                case Tools.Fill:
+                    break;
+
+                case Tools.Text:
+                    m_btFont.Visible = true;
+                    m_btFont.Location = m_lbSize.Location;
+                    break;
+
+                case Tools.Shape:
+                    m_lbShapes.Visible = true;
+                    m_cbShapes.Visible = true;
+                    m_tbSides.Visible = true;
+                    m_lbSides.Visible = true;
+
+                    m_lbShapes.Location = m_lbSize.Location;
+                    m_cbShapes.Location = new Point(m_lbShapes.Location.X + m_lbShapes.Width, m_cbShapes.Location.Y);
+                    m_lbSides.Location = new Point(m_cbShapes.Location.X + m_cbShapes.Width, m_lbSides.Location.Y);
+                    m_tbSides.Location = new Point(m_lbSides.Location.X + m_lbSides.Width, m_tbSides.Location.Y);
+                    break;
+
+                case Tools.ColorPicker:
+                    m_btColorPickerShow.Visible = true;
+                    m_lbColorPicker.Visible = true;
+
+                    m_lbColorPicker.Location = m_lbSize.Location;
+                    m_btColorPickerShow.Location = new Point(m_lbColorPicker.Location.X + m_lbColorPicker.Width, m_btColorPickerShow.Location.Y);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        void ChangeTextBoxSize()
+        {
+            int padding = 5;
+            int numLines = m_tbTextTool.GetLineFromCharIndex(m_tbTextTool.TextLength) + 1;
+            int border = m_tbTextTool.Height - m_tbTextTool.ClientRectangle.Height;
+
+
+            m_tbTextTool.Height = m_tbTextTool.Font.Height * numLines + padding + border;
+
+            if (m_tbTextTool.Font.Style != FontStyle.Bold && m_tbTextTool.Font.Style != FontStyle.Regular)
+                m_tbTextTool.Width = TextRenderer.MeasureText(m_tbTextTool.Text, m_tbTextTool.Font).Width + padding + border + (int)m_tbTextTool.Font.Size;
+            else
+                m_tbTextTool.Width = TextRenderer.MeasureText(m_tbTextTool.Text, m_tbTextTool.Font).Width + padding + border;
+        }
+
+        //ham lay pixel tu bmWorkspace
+        #region -FILL TOOL-
+        private Color GetPixel(int x, int y, byte[] bytes, int width)
+        {
+            if (x * 4 + y * width * 4 + 3 > bytes.Length || x < 0 || y < 0)
+                return Color.Transparent;
+
+            Color color = Color.FromArgb(bytes[x * 4 + y * width * 4 + 3], bytes[x * 4 + y * width * 4 + 2], bytes[x * 4 + y * width * 4 + 1], bytes[x  * 4 + y * width * 4]);
+            return color;
+        }
+
+        private void SetPixel(int x, int y, byte[] bytes, int width, Color color)
+        {
+            if (x * 4 + y * width * 4 + 3 > bytes.Length)
+                return;
+            //cu moi diem anh cach nhau 4 don vi
+            bytes[x * 4 + y * width * 4] = color.B;
+            bytes[x * 4 + y * width * 4 + 1] = color.G;
+            bytes[x * 4 + y * width * 4 + 2] = color.R;
+            bytes[x * 4 + y * width * 4 + 3] = color.A;
+            
+            /* test
+            bytes[x * 4 + y * width * 4] = 77; // color.A;
+            bytes[x * 4 + y * width * 4 + 1] = 77; // color.R;
+            bytes[x * 4 + y * width * 4 + 2] = 77; // color.G;
+            bytes[x * 4 + y * width * 4 + 3] = 77; // color.B;
+             */
+        }
+
+        private bool ColorEquals(Color color1, Color color2)
+        {
+            //MessageBox.Show("Color A:" + color1.ToString() + "\nColor B: " + color2.ToString());
+
+            if (color1.A == color2.A && color1.B == color2.B && color1.R == color2.R && color1.G == color2.G)
+                return true;
+
+            return false;
+        }
+
+        //kiem tra mau xung quanh cua pixel co trung voi color cho truoc khong roi nhet vao list
+        private void CheckAroundPixel(int x, int y, byte[] bytes, Color color, int width, List<Point> list)
+        {
+            //kiem tra diem ben trai
+            if (ColorEquals(GetPixel(x - 1, y, bytes, width), color))
+            {
+                list.Add(new Point(x - 1, y));
+            }
+
+            //kiem tra diem ben phai
+            if (ColorEquals(GetPixel(x + 1, y, bytes, width), color))
+            {
+                list.Add(new Point(x + 1, y));
+            }
+
+            //kiem tra diem ben tren
+            if (ColorEquals(GetPixel(x, y - 1, bytes, width), color))
+            {
+                list.Add(new Point(x, y - 1));
+            }
+
+            //kiem tra diem ben duoi
+            if (ColorEquals(GetPixel(x, y + 1, bytes, width), color))
+            {
+                list.Add(new Point(x, y + 1));
+            }
+        }
+
+        private void FillColor(int x, int y, byte[] bytes, Color color, int width, int height, Color colorFill)
+        {
+            FloodFill(x, y, bytes, width, height, colorFill);
+        }
+
+        private void FloodFill(int x, int y, byte[] bytes, int width, int height, Color colorFill)
+        {
+            List<Point> points = new List<Point>();
+            points.Add(new Point(x, y));
+
+            while (points.Count > 0)
+            {
+                Point newPos = points[points.Count - 1];
+                int px = newPos.X, py = newPos.Y;
+                points.RemoveAt(points.Count - 1);
+
+                Console.WriteLine(points.Count.ToString());
+
+                bool reachLeft = false, reachRight = false;
+
+                while (ColorEquals(Color.White, GetPixel(px, py, bytes, width)) && py > 0)
+                {
+                    //Console.WriteLine("s");
+                    py--;
+                }
+
+                py++;
+
+                while (ColorEquals(Color.White, GetPixel(px, py, bytes, width)) && py < height)
+                {
+                    SetPixel(px, py, bytes, width, colorFill);
+
+                    if (px > 0)
+                    {
+                        if (ColorEquals(Color.White, GetPixel(px - 1, py, bytes, width)))
+                        {
+                            if (!reachLeft)
+                            {
+                                reachLeft = true;
+                                points.Add(new Point(px - 1, py));
+                            }
+                        }
+                        else if (reachLeft)
+                            reachLeft = false;
+                    }
+
+                    if (px < width)
+                    {
+                        if (ColorEquals(Color.White, GetPixel(px + 1, py, bytes, width)))
+                        {
+                            if (!reachRight)
+                            {
+                                reachRight = true;
+                                points.Add(new Point(px + 1, py));
+                            }
+                        }
+                        else if (reachRight)
+                            reachRight = false;
+                    }
+
+                    py++;
+                }
+            }
+        }
+
+        #endregion
+
+        #region -BUTTONS CLICK-
+        private void m_btMarquee_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Marquee;
+            ButtonDefaulChosen();
+            m_btMarquee.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btEraser_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Eraser;
+            ButtonDefaulChosen();
+            m_btEraser.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btFill_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Fill;
+            ButtonDefaulChosen();
+            m_btFill.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btBrush_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Brush;
+            ButtonDefaulChosen();
+            m_btBrush.IsChosen = true;
+
+            try
+            {
+                m_leftPen = new Pen(new SolidBrush(m_leftColor), int.Parse(m_tbSize.Text));
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.ToString());
+            }
+
+            ActiveTool();
+            this.Invalidate();
+        }
+
+        private void m_btText_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Text;
+            ButtonDefaulChosen();
+            m_btText.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btColorPicker_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.ColorPicker;            
+            ButtonDefaulChosen();
+            m_btColorPicker.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btShape_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Shape;
+            ButtonDefaulChosen();
+            m_btShape.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btZoom_Click(object sender, EventArgs e)
+        {
+            CurrentTool = Tools.Zoom;
+            ButtonDefaulChosen();
+            m_btZoom.IsChosen = true;
+            ActiveTool();
+        }
+
+        private void m_btLeftColor_Click(object sender, EventArgs e)
+        {
+            //CurrentTool = Tools.LeftColor;
+
+            if(colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_btLeftColor.BackColor = colorDialog1.Color;
+                m_leftColor = colorDialog1.Color;
+                ActiveTool();
+                PensChanged();
+            }
+        }
+
+        private void m_btRightColor_Click(object sender, EventArgs e)
+        {
+            //CurrentTool = Tools.RightColor;
+
+            if (colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                m_btRightColor.BackColor = colorDialog1.Color;
+                m_rightColor = colorDialog1.Color;
+                ActiveTool();
+                PensChanged();
+            }            
+        }
+
+        #endregion
+
+        #region - ANOTHER EVENTS-
+
         private void m_workSpace_MouseLeave(object sender, EventArgs e)
         {
             this.Cursor = Cursors.Default;
@@ -143,7 +512,7 @@ namespace Paint_Crazyland
         private void m_workSpace_MouseUp(object sender, MouseEventArgs e)
         {
             m_allowErase = false;
-            m_allowDrawPolygon = false;            
+            m_allowDrawPolygon = false;
 
             switch (CurrentTool)
             {
@@ -163,7 +532,7 @@ namespace Paint_Crazyland
                     }
 
                     if (m_isMarqueeChosing)
-                    {                        
+                    {
                         if (m_mouseLocation.X > m_mouseFixedLocation.X && m_mouseLocation.Y >= m_mouseFixedLocation.Y)
                         {
                             m_rectMarquee = new Rectangle(m_mouseFixedLocation,
@@ -193,7 +562,7 @@ namespace Paint_Crazyland
                         m_isMarqueeChosing = false;
                         m_isMarqueeFinish = true;
 
-                        if(m_rectMarquee.Width != 0 && m_rectMarquee.Height != 0)
+                        if (m_rectMarquee.Width != 0 && m_rectMarquee.Height != 0)
                         {
                             m_bmMarquee = m_bmWorkSpace.Clone(m_rectMarquee, m_bmWorkSpace.PixelFormat);
                             m_gpTemp.FillRectangle(Brushes.White, m_rectMarquee);
@@ -249,7 +618,7 @@ namespace Paint_Crazyland
                 m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
                 m_bmSave = new Bitmap(m_bmWorkSpace);
             }
-                
+
 
             m_listMouseLocation.Clear();
             m_mouseLocation = e.Location;
@@ -303,14 +672,54 @@ namespace Paint_Crazyland
                     break;
 
                 case Tools.Marquee:
-                    
+
+                    break;
+
+                case Tools.Fill:
+                    if (CurrentTool == Tools.Fill)
+                    {
+                        BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0,0,m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+                        IntPtr intptr = bmData.Scan0;
+                        int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+                        byte[] bytes = new byte[length];
+                        System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
+                        m_arrayCheckFill = new int[m_bmWorkSpace.Width, m_bmWorkSpace.Height];
+
+                        FillColor(e.Location.X, e.Location.Y, bytes,
+                                    GetPixel(e.Location.X, e.Location.Y, bytes, bmData.Stride / 4),
+                                    m_bmWorkSpace.Width, m_bmWorkSpace.Height, m_leftColor);
+
+                        /*
+                        bytes[i] = 0; // B
+                        bytes[i + 1] = 0; // G
+                        bytes[i + 2] = 255; // R
+                        bytes[i + 3] = 255; // A
+                         * 
+                        //for (int i = 0; i < m_bmWorkSpace.Height; i++)
+                        //{
+                        //    for (int j = 0; j < m_bmWorkSpace.Width * 4; j += 4)
+                        //    { 
+                        //        bytes[j + i * m_bmWorkSpace.Width * 4] = 255;
+                        //        bytes[j + i * m_bmWorkSpace.Width * 4 + 1] = 0;
+                        //        bytes[j + i * m_bmWorkSpace.Width * 4 + 2] = 0;
+                        //        bytes[j + i * m_bmWorkSpace.Width * 4 + 3] = 255;
+                        //    }
+                        //}
+                        */
+
+                        System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+
+                        m_bmWorkSpace.UnlockBits(bmData);
+                        m_workSpace.Invalidate();
+                    }
                     break;
                 default:
                     break;
             }
 
             m_workSpace.Invalidate();
-        }
+        }                                                                                                              
 
         private void m_workSpace_MouseMove(object sender, MouseEventArgs e)
         {
@@ -321,7 +730,7 @@ namespace Paint_Crazyland
                 this.Cursor = Cursors.SizeNWSE;
             else
                 this.Cursor = Cursors.Default;
-             
+
             #region -resize workspace-
             if (m_allowResieWorkSpace)
             {
@@ -361,7 +770,7 @@ namespace Paint_Crazyland
                 case Tools.Text:
                     break;
                 case Tools.Shape:
-                    if(m_isMouseDown)
+                    if (m_isMouseDown)
                         m_allowDrawPolygon = true;
                     break;
 
@@ -484,7 +893,7 @@ namespace Paint_Crazyland
                                     }
                                 }
                             }
-                        }                        
+                        }
                     }
 
                     #endregion
@@ -494,7 +903,7 @@ namespace Paint_Crazyland
                     #region -ERASER-
                     if (m_allowErase)
                     {
-                        m_gpTemp.FillRectangle(new SolidBrush(Color.White), 
+                        m_gpTemp.FillRectangle(new SolidBrush(Color.White),
                                                     new Rectangle(m_mouseLocation.X - size / 2, m_mouseLocation.Y - size / 2, size, size));
                     }
 
@@ -535,7 +944,7 @@ namespace Paint_Crazyland
                             gp.DrawImage(m_bmMarquee, realPoint);
                             gp.DrawRectangle(pen, new Rectangle(new Point(realPoint.X, realPoint.Y), m_rectMarquee.Size));
                         }
-                    }                   
+                    }
 
                     #endregion
                     break;
@@ -554,7 +963,7 @@ namespace Paint_Crazyland
                     #region -TEXT-
                     if (m_allowDrawText)
                     {
-                        m_gpTemp.DrawString(m_tbTextTool.Text, m_tbTextTool.Font, new SolidBrush(m_leftColor), 
+                        m_gpTemp.DrawString(m_tbTextTool.Text, m_tbTextTool.Font, new SolidBrush(m_leftColor),
                                                 new PointF(m_tbTextTool.Location.X - m_workSpace.Location.X, m_tbTextTool.Location.Y - m_workSpace.Location.Y));
                         m_tbTextTool.Text = "";
                     }
@@ -610,11 +1019,11 @@ namespace Paint_Crazyland
                                             #region -5 SIDES-
                                             m_points = new Point[]
                                             {
-                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) / 2, m_mouseFixedLocation.Y),
-                                                new Point(m_mouseFixedLocation.X, m_mouseFixedLocation.Y + (m_mouseLocation.Y - m_mouseFixedLocation.Y) / 2),
-                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) / 3 , m_mouseLocation.Y),
-                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) * 2 / 3 , m_mouseLocation.Y),
-                                                new Point(m_mouseLocation.X, m_mouseFixedLocation.Y + (m_mouseLocation.Y - m_mouseFixedLocation.Y) / 2)
+                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) /                                                               2, m_mouseFixedLocation.Y),
+                                                new Point(m_mouseFixedLocation.X, m_mouseFixedLocation.Y + (m_mouseLocation.Y -                                                                 m_mouseFixedLocation.Y) / 2),
+                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) /                                                               3 , m_mouseLocation.Y),
+                                                new Point(m_mouseFixedLocation.X + (m_mouseLocation.X - m_mouseFixedLocation.X) *                                                           2 / 3 , m_mouseLocation.Y),
+                                                new Point(m_mouseLocation.X, m_mouseFixedLocation.Y + (m_mouseLocation.Y -                                                                  m_mouseFixedLocation.Y) / 2)
                                             };
 
                                             gp.DrawPolygon(m_leftPen, m_points);
@@ -641,28 +1050,30 @@ namespace Paint_Crazyland
                                             break;
                                     }
                                 }
-#endregion
+                                #endregion
                                 break;
 
                             case "Ellipse":
                                 #region -ECLIPSE-
                                 if (m_mouseLocation.X > m_mouseFixedLocation.X && m_mouseLocation.Y >= m_mouseFixedLocation.Y)
                                 {
-                                    gp.DrawEllipse(m_leftPen, new Rectangle(m_mouseFixedLocation, 
+                                    gp.DrawEllipse(m_leftPen, new Rectangle(m_mouseFixedLocation,
                                                         new Size(Math.Abs(m_mouseLocation.X - m_mouseFixedLocation.X),
                                                                     Math.Abs(m_mouseLocation.Y - m_mouseFixedLocation.Y))));
                                 }
-                                else if(m_mouseLocation.X > m_mouseFixedLocation.X && m_mouseLocation.Y <= m_mouseFixedLocation.Y)
+                                else if (m_mouseLocation.X > m_mouseFixedLocation.X && m_mouseLocation.Y <= m_mouseFixedLocation.Y)
                                 {
                                     gp.DrawEllipse(m_leftPen, new Rectangle(new Point(m_mouseFixedLocation.X, m_mouseLocation.Y),
                                                         new Size(Math.Abs(m_mouseLocation.X - m_mouseFixedLocation.X),
                                                                     Math.Abs(m_mouseLocation.Y - m_mouseFixedLocation.Y))));
-                                } else if(m_mouseLocation.X < m_mouseFixedLocation.X && m_mouseLocation.Y >= m_mouseFixedLocation.Y)
+                                }
+                                else if (m_mouseLocation.X < m_mouseFixedLocation.X && m_mouseLocation.Y >= m_mouseFixedLocation.Y)
                                 {
                                     gp.DrawEllipse(m_leftPen, new Rectangle(new Point(m_mouseLocation.X, m_mouseFixedLocation.Y),
                                                         new Size(Math.Abs(m_mouseLocation.X - m_mouseFixedLocation.X),
                                                                     Math.Abs(m_mouseLocation.Y - m_mouseFixedLocation.Y))));
-                                }else
+                                }
+                                else
                                 {
                                     gp.DrawEllipse(m_leftPen, new Rectangle(new Point(m_mouseLocation.X, m_mouseLocation.Y),
                                                         new Size(Math.Abs(m_mouseLocation.X - m_mouseFixedLocation.X),
@@ -673,246 +1084,26 @@ namespace Paint_Crazyland
 
                             default:
                                 break;
-                        };                        
+                        };
                     }
                     catch
                     {
 
                     }
-                    
+
                     #endregion
                     break;
 
                 default:
                     break;
             }
-            
+
             e.Graphics.DrawImage(m_bmWorkSpace, new Point(0, 0));
 
-            if (((CurrentTool == Tools.Shape && m_allowDrawPolygon) || CurrentTool == Tools.Eraser || CurrentTool == Tools.Marquee))                
+            if (((CurrentTool == Tools.Shape && m_allowDrawPolygon) || CurrentTool == Tools.Eraser || CurrentTool == Tools.Marquee))
                 e.Graphics.DrawImage(m_bmTemp, new Point(0, 0));
         }
 
-        //cho phep an/hien cac option can thiet
-        void ActiveTool()
-        {            
-            m_btColorPickerShow.Visible = false;
-            m_lbColorPicker.Visible = false;
-            m_lbShapes.Visible = false;
-            m_cbShapes.Visible = false;
-            m_btFont.Visible = false;
-            m_tbSides.Visible = false;
-            m_lbSize.Visible = false;
-            m_tbSize.Visible = false;
-            m_lbSides.Visible = false;
-            m_lbZoom.Visible = false;
-            m_tbZoom.Visible = false;
-            m_tbZoomValue.Visible = false;
-
-            if (CurrentTool != Tools.Zoom)
-                m_isFistTimeZoom = true;
-
-            if (CurrentTool != Tools.Marquee)
-            {
-                if(m_isMarqueeFinish)
-                {
-                    m_gpTemp.DrawImage(m_bmMarquee, m_rectMarquee);
-
-                    m_rectMarquee = Rectangle.Empty;
-                    m_bmMarquee = null;
-
-                    m_isMarqueeFinish = false;
-                    m_isMarqueeChosing = false;
-                    m_isMarqueeChosen = false;
-                    m_isMouseUpMarqueeShow = false;
-                    m_workSpace.Invalidate();
-                }
-            }
-
-            switch (CurrentTool)
-            {
-                case Tools.Brush:
-                    m_lbSize.Visible = true;
-                    m_tbSize.Visible = true;
-                    break;
-
-                case Tools.Eraser:
-                    m_lbSize.Visible = true;
-                    m_tbSize.Visible = true;
-                    break;
-
-                case Tools.Marquee:
-                    break;
-
-                case Tools.Zoom:
-                    m_lbZoom.Visible = true;
-                    m_tbZoom.Visible = true;
-                    m_tbZoomValue.Visible = true;
-
-                    m_lbZoom.Location = m_lbSize.Location;
-                    m_tbZoomValue.Location = new Point(m_lbZoom.Location.X + m_lbZoom.Width, m_tbZoomValue.Location.Y);
-                    m_tbZoom.Location = new Point(m_tbZoomValue.Location.X + m_tbZoomValue.Width, m_tbZoom.Location.Y);
-
-                    if (m_isFistTimeZoom)
-                    {
-                        m_isFistTimeZoom = false;
-                        m_bmSave = new Bitmap(m_bmWorkSpace, m_bmSave.Size);
-                    }
-                    break;
-
-                case Tools.Fill:
-                    break;
-
-                case Tools.Text:
-                    m_btFont.Visible = true;
-                    m_btFont.Location = m_lbSize.Location;
-                    break;
-
-                case Tools.Shape:
-                    m_lbShapes.Visible = true;
-                    m_cbShapes.Visible = true;
-                    m_tbSides.Visible = true;
-                    m_lbSides.Visible = true;
-
-                    m_lbShapes.Location = m_lbSize.Location;
-                    m_cbShapes.Location = new Point(m_lbShapes.Location.X + m_lbShapes.Width, m_cbShapes.Location.Y);
-                    m_lbSides.Location = new Point(m_cbShapes.Location.X + m_cbShapes.Width, m_lbSides.Location.Y);
-                    m_tbSides.Location = new Point(m_lbSides.Location.X + m_lbSides.Width, m_tbSides.Location.Y);
-                    break;
-
-                case Tools.ColorPicker:
-                    m_btColorPickerShow.Visible = true;
-                    m_lbColorPicker.Visible = true;
-
-                    m_lbColorPicker.Location = m_lbSize.Location;
-                    m_btColorPickerShow.Location = new Point(m_lbColorPicker.Location.X + m_lbColorPicker.Width, m_btColorPickerShow.Location.Y); 
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        void ChangeTextBoxSize()
-        {
-            int padding = 5;
-            int numLines = m_tbTextTool.GetLineFromCharIndex(m_tbTextTool.TextLength) + 1;
-            int border = m_tbTextTool.Height - m_tbTextTool.ClientRectangle.Height;
-
-
-            m_tbTextTool.Height = m_tbTextTool.Font.Height * numLines + padding + border;
-
-            if (m_tbTextTool.Font.Style != FontStyle.Bold && m_tbTextTool.Font.Style != FontStyle.Regular)
-                m_tbTextTool.Width = TextRenderer.MeasureText(m_tbTextTool.Text, m_tbTextTool.Font).Width + padding + border + (int)m_tbTextTool.Font.Size;
-            else
-                m_tbTextTool.Width = TextRenderer.MeasureText(m_tbTextTool.Text, m_tbTextTool.Font).Width + padding + border;
-        }
-
-        #region -BUTTONS CLICK-
-        private void m_btMarquee_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Marquee;
-            ButtonDefaulChosen();
-            m_btMarquee.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btEraser_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Eraser;
-            ButtonDefaulChosen();
-            m_btEraser.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btFill_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Fill;
-            ButtonDefaulChosen();
-            m_btFill.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btBrush_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Brush;
-            ButtonDefaulChosen();
-            m_btBrush.IsChosen = true;
-
-            try
-            {
-                m_leftPen = new Pen(new SolidBrush(m_leftColor), int.Parse(m_tbSize.Text));
-            }
-            catch (Exception Ex)
-            {
-                MessageBox.Show(Ex.ToString());
-            }
-
-            ActiveTool();
-            this.Invalidate();
-        }
-
-        private void m_btText_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Text;
-            ButtonDefaulChosen();
-            m_btText.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btColorPicker_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.ColorPicker;            
-            ButtonDefaulChosen();
-            m_btColorPicker.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btShape_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Shape;
-            ButtonDefaulChosen();
-            m_btShape.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btZoom_Click(object sender, EventArgs e)
-        {
-            CurrentTool = Tools.Zoom;
-            ButtonDefaulChosen();
-            m_btZoom.IsChosen = true;
-            ActiveTool();
-        }
-
-        private void m_btLeftColor_Click(object sender, EventArgs e)
-        {
-            //CurrentTool = Tools.LeftColor;
-
-            if(colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                m_btLeftColor.BackColor = colorDialog1.Color;
-                m_leftColor = colorDialog1.Color;
-                ActiveTool();
-                PensChanged();
-            }
-        }
-
-        private void m_btRightColor_Click(object sender, EventArgs e)
-        {
-            //CurrentTool = Tools.RightColor;
-
-            if (colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                m_btRightColor.BackColor = colorDialog1.Color;
-                m_rightColor = colorDialog1.Color;
-                ActiveTool();
-                PensChanged();
-            }            
-        }
-
-        #endregion
-
-        #region - ANOTHER EVENTS-
         private void m_tbSize_TextChanged(object sender, EventArgs e)
         {
             if(m_tbSize.Text != "")
@@ -978,7 +1169,6 @@ namespace Paint_Crazyland
                 ChangeTextBoxSize();
             }
         }
-        #endregion
 
         private void m_btColorPickerShow_Click(object sender, EventArgs e)
         {
@@ -996,5 +1186,11 @@ namespace Paint_Crazyland
         {
             Zoom();
         }
+
+        private void m_workSpace_Click(object sender, EventArgs e)
+        {
+            
+        }
+        #endregion
     }
 }

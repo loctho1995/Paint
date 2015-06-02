@@ -432,6 +432,7 @@
             this.m_workSpace.Size = new System.Drawing.Size(881, 389);
             this.m_workSpace.TabIndex = 5;
             this.m_workSpace.TabStop = false;
+            this.m_workSpace.Click += new System.EventHandler(this.m_workSpace_Click);
             this.m_workSpace.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_workSpace_MouseClick);
             // 
             // m_tbTextTool
