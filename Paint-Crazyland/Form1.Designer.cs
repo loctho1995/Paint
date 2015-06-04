@@ -53,25 +53,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.m_toolBar = new System.Windows.Forms.Panel();
-            this.m_propertiesBar = new System.Windows.Forms.Panel();
-            this.m_lbZoom = new System.Windows.Forms.Label();
-            this.m_tbZoomValue = new System.Windows.Forms.TextBox();
-            this.m_tbZoom = new System.Windows.Forms.TrackBar();
-            this.m_tbSides = new System.Windows.Forms.TextBox();
-            this.m_lbSides = new System.Windows.Forms.Label();
-            this.m_lbShapes = new System.Windows.Forms.Label();
-            this.m_cbShapes = new System.Windows.Forms.ComboBox();
-            this.m_lbColorPicker = new System.Windows.Forms.Label();
-            this.m_tbSize = new System.Windows.Forms.TextBox();
-            this.m_lbSize = new System.Windows.Forms.Label();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.m_workSpace = new System.Windows.Forms.PictureBox();
-            this.m_tbTextTool = new System.Windows.Forms.TextBox();
-            this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.m_btFont = new Paint_Crazyland.ButtonFlat();
-            this.m_btColorPickerShow = new Paint_Crazyland.ButtonFlat();
             this.m_btLeftColor = new Paint_Crazyland.ButtonFlat();
             this.m_btRightColor = new Paint_Crazyland.ButtonFlat();
             this.m_btZoom = new Paint_Crazyland.ButtonFlat();
@@ -82,6 +63,25 @@
             this.m_btFill = new Paint_Crazyland.ButtonFlat();
             this.m_btEraser = new Paint_Crazyland.ButtonFlat();
             this.m_btMarquee = new Paint_Crazyland.ButtonFlat();
+            this.m_propertiesBar = new System.Windows.Forms.Panel();
+            this.m_lbZoom = new System.Windows.Forms.Label();
+            this.m_tbZoomValue = new System.Windows.Forms.TextBox();
+            this.m_tbZoom = new System.Windows.Forms.TrackBar();
+            this.m_tbSides = new System.Windows.Forms.TextBox();
+            this.m_lbSides = new System.Windows.Forms.Label();
+            this.m_btFont = new Paint_Crazyland.ButtonFlat();
+            this.m_lbShapes = new System.Windows.Forms.Label();
+            this.m_cbShapes = new System.Windows.Forms.ComboBox();
+            this.m_lbColorPicker = new System.Windows.Forms.Label();
+            this.m_btColorPickerShow = new Paint_Crazyland.ButtonFlat();
+            this.m_tbSize = new System.Windows.Forms.TextBox();
+            this.m_lbSize = new System.Windows.Forms.Label();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.m_workSpace = new System.Windows.Forms.PictureBox();
+            this.m_tbTextTool = new System.Windows.Forms.TextBox();
+            this.fontDialog1 = new System.Windows.Forms.FontDialog();
             this.menuStrip1.SuspendLayout();
             this.m_toolBar.SuspendLayout();
             this.m_propertiesBar.SuspendLayout();
@@ -286,213 +286,6 @@
             this.m_toolBar.Name = "m_toolBar";
             this.m_toolBar.Size = new System.Drawing.Size(115, 391);
             this.m_toolBar.TabIndex = 1;
-            // 
-            // m_propertiesBar
-            // 
-            this.m_propertiesBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_propertiesBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.m_propertiesBar.Controls.Add(this.m_lbZoom);
-            this.m_propertiesBar.Controls.Add(this.m_tbZoomValue);
-            this.m_propertiesBar.Controls.Add(this.m_tbZoom);
-            this.m_propertiesBar.Controls.Add(this.m_tbSides);
-            this.m_propertiesBar.Controls.Add(this.m_lbSides);
-            this.m_propertiesBar.Controls.Add(this.m_btFont);
-            this.m_propertiesBar.Controls.Add(this.m_lbShapes);
-            this.m_propertiesBar.Controls.Add(this.m_cbShapes);
-            this.m_propertiesBar.Controls.Add(this.m_lbColorPicker);
-            this.m_propertiesBar.Controls.Add(this.m_btColorPickerShow);
-            this.m_propertiesBar.Controls.Add(this.m_tbSize);
-            this.m_propertiesBar.Controls.Add(this.m_lbSize);
-            this.m_propertiesBar.Location = new System.Drawing.Point(0, 27);
-            this.m_propertiesBar.Name = "m_propertiesBar";
-            this.m_propertiesBar.Size = new System.Drawing.Size(1000, 39);
-            this.m_propertiesBar.TabIndex = 3;
-            // 
-            // m_lbZoom
-            // 
-            this.m_lbZoom.AutoSize = true;
-            this.m_lbZoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbZoom.Location = new System.Drawing.Point(515, 8);
-            this.m_lbZoom.Name = "m_lbZoom";
-            this.m_lbZoom.Size = new System.Drawing.Size(50, 20);
-            this.m_lbZoom.TabIndex = 19;
-            this.m_lbZoom.Text = "Zoom";
-            // 
-            // m_tbZoomValue
-            // 
-            this.m_tbZoomValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_tbZoomValue.Location = new System.Drawing.Point(571, 4);
-            this.m_tbZoomValue.Multiline = true;
-            this.m_tbZoomValue.Name = "m_tbZoomValue";
-            this.m_tbZoomValue.Size = new System.Drawing.Size(67, 28);
-            this.m_tbZoomValue.TabIndex = 18;
-            this.m_tbZoomValue.Text = "100";
-            this.m_tbZoomValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.m_tbZoomValue.TextChanged += new System.EventHandler(this.m_tbZoomValue_TextChanged);
-            // 
-            // m_tbZoom
-            // 
-            this.m_tbZoom.AutoSize = false;
-            this.m_tbZoom.Location = new System.Drawing.Point(644, 5);
-            this.m_tbZoom.Maximum = 400;
-            this.m_tbZoom.Name = "m_tbZoom";
-            this.m_tbZoom.Size = new System.Drawing.Size(175, 29);
-            this.m_tbZoom.TabIndex = 17;
-            this.m_tbZoom.TickFrequency = 4;
-            this.m_tbZoom.Scroll += new System.EventHandler(this.m_tbZoom_Scroll);
-            // 
-            // m_tbSides
-            // 
-            this.m_tbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_tbSides.Location = new System.Drawing.Point(170, 5);
-            this.m_tbSides.Multiline = true;
-            this.m_tbSides.Name = "m_tbSides";
-            this.m_tbSides.Size = new System.Drawing.Size(60, 29);
-            this.m_tbSides.TabIndex = 16;
-            this.m_tbSides.Text = "3";
-            this.m_tbSides.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // m_lbSides
-            // 
-            this.m_lbSides.AutoSize = true;
-            this.m_lbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbSides.Location = new System.Drawing.Point(115, 9);
-            this.m_lbSides.Name = "m_lbSides";
-            this.m_lbSides.Size = new System.Drawing.Size(49, 20);
-            this.m_lbSides.TabIndex = 15;
-            this.m_lbSides.Text = "Sides";
-            // 
-            // m_lbShapes
-            // 
-            this.m_lbShapes.AutoSize = true;
-            this.m_lbShapes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbShapes.Location = new System.Drawing.Point(12, 10);
-            this.m_lbShapes.Name = "m_lbShapes";
-            this.m_lbShapes.Size = new System.Drawing.Size(64, 20);
-            this.m_lbShapes.TabIndex = 14;
-            this.m_lbShapes.Text = "Shapes";
-            // 
-            // m_cbShapes
-            // 
-            this.m_cbShapes.FormattingEnabled = true;
-            this.m_cbShapes.Items.AddRange(new object[] {
-            "Line",
-            "Polygon",
-            "Ellipse"});
-            this.m_cbShapes.Location = new System.Drawing.Point(82, 11);
-            this.m_cbShapes.Name = "m_cbShapes";
-            this.m_cbShapes.Size = new System.Drawing.Size(121, 21);
-            this.m_cbShapes.TabIndex = 13;
-            this.m_cbShapes.SelectedIndexChanged += new System.EventHandler(this.m_cbShapes_SelectedIndexChanged);
-            // 
-            // m_lbColorPicker
-            // 
-            this.m_lbColorPicker.AutoSize = true;
-            this.m_lbColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbColorPicker.Location = new System.Drawing.Point(12, 11);
-            this.m_lbColorPicker.Name = "m_lbColorPicker";
-            this.m_lbColorPicker.Size = new System.Drawing.Size(93, 20);
-            this.m_lbColorPicker.TabIndex = 12;
-            this.m_lbColorPicker.Text = "Color Picker";
-            // 
-            // m_tbSize
-            // 
-            this.m_tbSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_tbSize.Location = new System.Drawing.Point(55, 4);
-            this.m_tbSize.Multiline = true;
-            this.m_tbSize.Name = "m_tbSize";
-            this.m_tbSize.Size = new System.Drawing.Size(60, 29);
-            this.m_tbSize.TabIndex = 1;
-            this.m_tbSize.Text = "3";
-            this.m_tbSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.m_tbSize.TextChanged += new System.EventHandler(this.m_tbSize_TextChanged);
-            this.m_tbSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbSize_KeyPress);
-            // 
-            // m_lbSize
-            // 
-            this.m_lbSize.AutoSize = true;
-            this.m_lbSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_lbSize.Location = new System.Drawing.Point(11, 9);
-            this.m_lbSize.Name = "m_lbSize";
-            this.m_lbSize.Size = new System.Drawing.Size(40, 20);
-            this.m_lbSize.TabIndex = 0;
-            this.m_lbSize.Text = "Size";
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // m_workSpace
-            // 
-            this.m_workSpace.BackColor = System.Drawing.Color.White;
-            this.m_workSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.m_workSpace.Location = new System.Drawing.Point(116, 67);
-            this.m_workSpace.Name = "m_workSpace";
-            this.m_workSpace.Size = new System.Drawing.Size(881, 389);
-            this.m_workSpace.TabIndex = 5;
-            this.m_workSpace.TabStop = false;
-            this.m_workSpace.Click += new System.EventHandler(this.m_workSpace_Click);
-            this.m_workSpace.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_workSpace_MouseClick);
-            // 
-            // m_tbTextTool
-            // 
-            this.m_tbTextTool.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.m_tbTextTool.Location = new System.Drawing.Point(357, 128);
-            this.m_tbTextTool.Multiline = true;
-            this.m_tbTextTool.Name = "m_tbTextTool";
-            this.m_tbTextTool.Size = new System.Drawing.Size(100, 23);
-            this.m_tbTextTool.TabIndex = 8;
-            this.m_tbTextTool.Visible = false;
-            this.m_tbTextTool.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbTextTool_KeyPress);
-            // 
-            // m_btFont
-            // 
-            this.m_btFont.AlphaGlow = 40F;
-            this.m_btFont.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(208)))), ((int)(((byte)(136)))));
-            this.m_btFont.ButtonImage = null;
-            this.m_btFont.ButtonText = "Font";
-            this.m_btFont.DeltaAlphaGlow = 2F;
-            this.m_btFont.DeltaDistance = 2F;
-            this.m_btFont.HaveEffects = false;
-            this.m_btFont.ImageOrigin = new System.Drawing.Point(0, 0);
-            this.m_btFont.ImageSize = new System.Drawing.Size(100, 100);
-            this.m_btFont.IsChosen = false;
-            this.m_btFont.Location = new System.Drawing.Point(12, 7);
-            this.m_btFont.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
-            this.m_btFont.Name = "m_btFont";
-            this.m_btFont.SaveChanged = false;
-            this.m_btFont.ShadownDistance = 6;
-            this.m_btFont.Size = new System.Drawing.Size(83, 23);
-            this.m_btFont.TabIndex = 9;
-            this.m_btFont.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Center;
-            this.m_btFont.TextColor = System.Drawing.Color.White;
-            this.m_btFont.TextOrigin = new System.Drawing.Point(0, 0);
-            this.m_btFont.Click += new System.EventHandler(this.m_btFont_Click);
-            // 
-            // m_btColorPickerShow
-            // 
-            this.m_btColorPickerShow.AlphaGlow = 40F;
-            this.m_btColorPickerShow.BackColor = System.Drawing.Color.Black;
-            this.m_btColorPickerShow.ButtonImage = null;
-            this.m_btColorPickerShow.ButtonText = "";
-            this.m_btColorPickerShow.DeltaAlphaGlow = 2F;
-            this.m_btColorPickerShow.DeltaDistance = 2F;
-            this.m_btColorPickerShow.HaveEffects = false;
-            this.m_btColorPickerShow.ImageOrigin = new System.Drawing.Point(0, 0);
-            this.m_btColorPickerShow.ImageSize = new System.Drawing.Size(40, 40);
-            this.m_btColorPickerShow.IsChosen = false;
-            this.m_btColorPickerShow.Location = new System.Drawing.Point(111, 2);
-            this.m_btColorPickerShow.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
-            this.m_btColorPickerShow.Name = "m_btColorPickerShow";
-            this.m_btColorPickerShow.SaveChanged = false;
-            this.m_btColorPickerShow.ShadownDistance = 6;
-            this.m_btColorPickerShow.Size = new System.Drawing.Size(36, 35);
-            this.m_btColorPickerShow.TabIndex = 11;
-            this.m_btColorPickerShow.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Bot;
-            this.m_btColorPickerShow.TextColor = System.Drawing.Color.White;
-            this.m_btColorPickerShow.TextOrigin = new System.Drawing.Point(0, 0);
-            this.m_btColorPickerShow.Click += new System.EventHandler(this.m_btColorPickerShow_Click);
             // 
             // m_btLeftColor
             // 
@@ -733,6 +526,213 @@
             this.m_btMarquee.TextColor = System.Drawing.Color.White;
             this.m_btMarquee.TextOrigin = new System.Drawing.Point(0, 0);
             this.m_btMarquee.Click += new System.EventHandler(this.m_btMarquee_Click);
+            // 
+            // m_propertiesBar
+            // 
+            this.m_propertiesBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_propertiesBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.m_propertiesBar.Controls.Add(this.m_lbZoom);
+            this.m_propertiesBar.Controls.Add(this.m_tbZoomValue);
+            this.m_propertiesBar.Controls.Add(this.m_tbZoom);
+            this.m_propertiesBar.Controls.Add(this.m_tbSides);
+            this.m_propertiesBar.Controls.Add(this.m_lbSides);
+            this.m_propertiesBar.Controls.Add(this.m_btFont);
+            this.m_propertiesBar.Controls.Add(this.m_lbShapes);
+            this.m_propertiesBar.Controls.Add(this.m_cbShapes);
+            this.m_propertiesBar.Controls.Add(this.m_lbColorPicker);
+            this.m_propertiesBar.Controls.Add(this.m_btColorPickerShow);
+            this.m_propertiesBar.Controls.Add(this.m_tbSize);
+            this.m_propertiesBar.Controls.Add(this.m_lbSize);
+            this.m_propertiesBar.Location = new System.Drawing.Point(0, 27);
+            this.m_propertiesBar.Name = "m_propertiesBar";
+            this.m_propertiesBar.Size = new System.Drawing.Size(1000, 39);
+            this.m_propertiesBar.TabIndex = 3;
+            // 
+            // m_lbZoom
+            // 
+            this.m_lbZoom.AutoSize = true;
+            this.m_lbZoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbZoom.Location = new System.Drawing.Point(515, 8);
+            this.m_lbZoom.Name = "m_lbZoom";
+            this.m_lbZoom.Size = new System.Drawing.Size(50, 20);
+            this.m_lbZoom.TabIndex = 19;
+            this.m_lbZoom.Text = "Zoom";
+            // 
+            // m_tbZoomValue
+            // 
+            this.m_tbZoomValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_tbZoomValue.Location = new System.Drawing.Point(571, 4);
+            this.m_tbZoomValue.Multiline = true;
+            this.m_tbZoomValue.Name = "m_tbZoomValue";
+            this.m_tbZoomValue.Size = new System.Drawing.Size(67, 28);
+            this.m_tbZoomValue.TabIndex = 18;
+            this.m_tbZoomValue.Text = "100";
+            this.m_tbZoomValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.m_tbZoomValue.TextChanged += new System.EventHandler(this.m_tbZoomValue_TextChanged);
+            // 
+            // m_tbZoom
+            // 
+            this.m_tbZoom.AutoSize = false;
+            this.m_tbZoom.Location = new System.Drawing.Point(644, 5);
+            this.m_tbZoom.Maximum = 400;
+            this.m_tbZoom.Name = "m_tbZoom";
+            this.m_tbZoom.Size = new System.Drawing.Size(175, 29);
+            this.m_tbZoom.TabIndex = 17;
+            this.m_tbZoom.TickFrequency = 4;
+            this.m_tbZoom.Scroll += new System.EventHandler(this.m_tbZoom_Scroll);
+            // 
+            // m_tbSides
+            // 
+            this.m_tbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_tbSides.Location = new System.Drawing.Point(170, 5);
+            this.m_tbSides.Multiline = true;
+            this.m_tbSides.Name = "m_tbSides";
+            this.m_tbSides.Size = new System.Drawing.Size(60, 29);
+            this.m_tbSides.TabIndex = 16;
+            this.m_tbSides.Text = "3";
+            this.m_tbSides.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // m_lbSides
+            // 
+            this.m_lbSides.AutoSize = true;
+            this.m_lbSides.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbSides.Location = new System.Drawing.Point(115, 9);
+            this.m_lbSides.Name = "m_lbSides";
+            this.m_lbSides.Size = new System.Drawing.Size(49, 20);
+            this.m_lbSides.TabIndex = 15;
+            this.m_lbSides.Text = "Sides";
+            // 
+            // m_btFont
+            // 
+            this.m_btFont.AlphaGlow = 40F;
+            this.m_btFont.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(208)))), ((int)(((byte)(136)))));
+            this.m_btFont.ButtonImage = null;
+            this.m_btFont.ButtonText = "Font";
+            this.m_btFont.DeltaAlphaGlow = 2F;
+            this.m_btFont.DeltaDistance = 2F;
+            this.m_btFont.HaveEffects = false;
+            this.m_btFont.ImageOrigin = new System.Drawing.Point(0, 0);
+            this.m_btFont.ImageSize = new System.Drawing.Size(100, 100);
+            this.m_btFont.IsChosen = false;
+            this.m_btFont.Location = new System.Drawing.Point(12, 7);
+            this.m_btFont.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
+            this.m_btFont.Name = "m_btFont";
+            this.m_btFont.SaveChanged = false;
+            this.m_btFont.ShadownDistance = 6;
+            this.m_btFont.Size = new System.Drawing.Size(83, 23);
+            this.m_btFont.TabIndex = 9;
+            this.m_btFont.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Center;
+            this.m_btFont.TextColor = System.Drawing.Color.White;
+            this.m_btFont.TextOrigin = new System.Drawing.Point(0, 0);
+            this.m_btFont.Click += new System.EventHandler(this.m_btFont_Click);
+            // 
+            // m_lbShapes
+            // 
+            this.m_lbShapes.AutoSize = true;
+            this.m_lbShapes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbShapes.Location = new System.Drawing.Point(12, 10);
+            this.m_lbShapes.Name = "m_lbShapes";
+            this.m_lbShapes.Size = new System.Drawing.Size(64, 20);
+            this.m_lbShapes.TabIndex = 14;
+            this.m_lbShapes.Text = "Shapes";
+            // 
+            // m_cbShapes
+            // 
+            this.m_cbShapes.FormattingEnabled = true;
+            this.m_cbShapes.Items.AddRange(new object[] {
+            "Line",
+            "Polygon",
+            "Ellipse"});
+            this.m_cbShapes.Location = new System.Drawing.Point(82, 11);
+            this.m_cbShapes.Name = "m_cbShapes";
+            this.m_cbShapes.Size = new System.Drawing.Size(121, 21);
+            this.m_cbShapes.TabIndex = 13;
+            this.m_cbShapes.SelectedIndexChanged += new System.EventHandler(this.m_cbShapes_SelectedIndexChanged);
+            // 
+            // m_lbColorPicker
+            // 
+            this.m_lbColorPicker.AutoSize = true;
+            this.m_lbColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbColorPicker.Location = new System.Drawing.Point(12, 11);
+            this.m_lbColorPicker.Name = "m_lbColorPicker";
+            this.m_lbColorPicker.Size = new System.Drawing.Size(93, 20);
+            this.m_lbColorPicker.TabIndex = 12;
+            this.m_lbColorPicker.Text = "Color Picker";
+            // 
+            // m_btColorPickerShow
+            // 
+            this.m_btColorPickerShow.AlphaGlow = 40F;
+            this.m_btColorPickerShow.BackColor = System.Drawing.Color.Black;
+            this.m_btColorPickerShow.ButtonImage = null;
+            this.m_btColorPickerShow.ButtonText = "";
+            this.m_btColorPickerShow.DeltaAlphaGlow = 2F;
+            this.m_btColorPickerShow.DeltaDistance = 2F;
+            this.m_btColorPickerShow.HaveEffects = false;
+            this.m_btColorPickerShow.ImageOrigin = new System.Drawing.Point(0, 0);
+            this.m_btColorPickerShow.ImageSize = new System.Drawing.Size(40, 40);
+            this.m_btColorPickerShow.IsChosen = false;
+            this.m_btColorPickerShow.Location = new System.Drawing.Point(111, 2);
+            this.m_btColorPickerShow.MouseState = Paint_Crazyland.ButtonFlat.MouseStates.Leave;
+            this.m_btColorPickerShow.Name = "m_btColorPickerShow";
+            this.m_btColorPickerShow.SaveChanged = false;
+            this.m_btColorPickerShow.ShadownDistance = 6;
+            this.m_btColorPickerShow.Size = new System.Drawing.Size(36, 35);
+            this.m_btColorPickerShow.TabIndex = 11;
+            this.m_btColorPickerShow.TextAlignment = Paint_Crazyland.ButtonFlat.BTTextAlignment.Bot;
+            this.m_btColorPickerShow.TextColor = System.Drawing.Color.White;
+            this.m_btColorPickerShow.TextOrigin = new System.Drawing.Point(0, 0);
+            this.m_btColorPickerShow.Click += new System.EventHandler(this.m_btColorPickerShow_Click);
+            // 
+            // m_tbSize
+            // 
+            this.m_tbSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_tbSize.Location = new System.Drawing.Point(55, 4);
+            this.m_tbSize.Multiline = true;
+            this.m_tbSize.Name = "m_tbSize";
+            this.m_tbSize.Size = new System.Drawing.Size(60, 29);
+            this.m_tbSize.TabIndex = 1;
+            this.m_tbSize.Text = "3";
+            this.m_tbSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.m_tbSize.TextChanged += new System.EventHandler(this.m_tbSize_TextChanged);
+            this.m_tbSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbSize_KeyPress);
+            // 
+            // m_lbSize
+            // 
+            this.m_lbSize.AutoSize = true;
+            this.m_lbSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_lbSize.Location = new System.Drawing.Point(11, 9);
+            this.m_lbSize.Name = "m_lbSize";
+            this.m_lbSize.Size = new System.Drawing.Size(40, 20);
+            this.m_lbSize.TabIndex = 0;
+            this.m_lbSize.Text = "Size";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // m_workSpace
+            // 
+            this.m_workSpace.BackColor = System.Drawing.Color.White;
+            this.m_workSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.m_workSpace.Location = new System.Drawing.Point(116, 67);
+            this.m_workSpace.Name = "m_workSpace";
+            this.m_workSpace.Size = new System.Drawing.Size(881, 389);
+            this.m_workSpace.TabIndex = 5;
+            this.m_workSpace.TabStop = false;
+            this.m_workSpace.Click += new System.EventHandler(this.m_workSpace_Click);
+            this.m_workSpace.MouseClick += new System.Windows.Forms.MouseEventHandler(this.m_workSpace_MouseClick);
+            // 
+            // m_tbTextTool
+            // 
+            this.m_tbTextTool.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.m_tbTextTool.Location = new System.Drawing.Point(357, 128);
+            this.m_tbTextTool.Multiline = true;
+            this.m_tbTextTool.Name = "m_tbTextTool";
+            this.m_tbTextTool.Size = new System.Drawing.Size(100, 23);
+            this.m_tbTextTool.TabIndex = 8;
+            this.m_tbTextTool.Visible = false;
+            this.m_tbTextTool.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_tbTextTool_KeyPress);
             // 
             // Form1
             // 

@@ -92,6 +92,12 @@ namespace Paint_Crazyland
                 {
                     m_isKeyDown = true;
                     m_keys = e.KeyCode;
+                    
+                };
+
+            this.KeyPress += (o, e) =>
+                {
+                    
                 };
 
             ActiveTool();
@@ -137,7 +143,6 @@ namespace Paint_Crazyland
                 }                    
 
                 float val = (float.Parse(m_tbZoomValue.Text)) / 100;
-                m_lbZoom.Text = val.ToString();
                 m_bmWorkSpace = new Bitmap(m_bmSave, (int)(m_bmSave.Width * val), (int)(m_bmSave.Height * val));
                 m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
                 m_workSpace.Size = m_bmWorkSpace.Size;
@@ -164,6 +169,11 @@ namespace Paint_Crazyland
             m_lbZoom.Visible = false;
             m_tbZoom.Visible = false;
             m_tbZoomValue.Visible = false;
+
+            m_textClicked = false;
+            m_tbTextTool.Visible = false;
+            m_allowDrawText = true;
+            m_tbTextTool.Text = "";
 
             if (CurrentTool != Tools.Zoom)
                 m_isFistTimeZoom = true;
@@ -671,10 +681,6 @@ namespace Paint_Crazyland
                     m_allowErase = true;
                     break;
 
-                case Tools.Marquee:
-
-                    break;
-
                 case Tools.Fill:
                     if (CurrentTool == Tools.Fill)
                     {
@@ -759,10 +765,6 @@ namespace Paint_Crazyland
                     m_workSpace.Invalidate();
                     break;
 
-                case Tools.Marquee:
-
-                    break;
-
                 case Tools.Zoom:
                     break;
                 case Tools.Fill:
@@ -783,20 +785,6 @@ namespace Paint_Crazyland
         {
             switch (CurrentTool)
             {
-                case Tools.Brush:
-                    break;
-
-                case Tools.Eraser:
-
-                    break;
-
-                case Tools.Marquee:
-                    break;
-                case Tools.Zoom:
-                    break;
-                case Tools.Fill:
-                    break;
-
                 case Tools.Text:
                     #region -Text-
                     if (!m_textClicked)
@@ -818,17 +806,11 @@ namespace Paint_Crazyland
 
                     break;
 
-                case Tools.Shape:
-                    break;
-
                 case Tools.ColorPicker:
                     m_btColorPickerShow.BackColor = m_bmWorkSpace.GetPixel(e.X, e.Y);
                     m_btLeftColor.BackColor = m_btColorPickerShow.BackColor;
                     PensChanged();
                     this.Invalidate();
-                    break;
-
-                case Tools.None:
                     break;
 
                 default:
