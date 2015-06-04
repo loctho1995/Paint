@@ -36,7 +36,9 @@ namespace Paint_Crazyland
                 m_textClicked,// Khi Text Tool duoc chon thi bien nay se cho biet la da nhap vao workspace luc nay se cho phep go text
                 m_allowDrawText,//sau khi ket thuc TextTool cho phep ve string len
                 m_allowErase,//cho phep tay trang 1 vung
-                m_allowDrawPolygon; // cho phep ve Polygon 
+                m_allowDrawPolygon, // cho phep ve Polygon 
+                m_isEdit, //neu co chinh sua thi mang gia tri true va nguoc lai
+                m_firstSave; //true khi nguoi dung chua luu lan dau tien
 
         Bitmap  m_bmWorkSpace, 
                 m_bmTemp, //dung de demo cac shape
@@ -57,9 +59,21 @@ namespace Paint_Crazyland
         int m_grid = 15; //gioi han size khi re chuot vao resize workspace
         int[,] m_arrayCheckFill; // kiem tra nhung vi tri da fill
 
+        string m_saveFile; //duong dan file duoc mo hay file da luu
+        int m_fileFilterIndex; // index filter cua open dialog
+
+        Stack<Bitmap> m_undo;
+        Stack<Bitmap> m_redo;
+        //Stack<Bitmap> m_copy;
+
         public Form1()
         {
             InitializeComponent();
+
+            saveFileDialog1.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.JPEG)|*.jpg|GIF(*.Gif)|*.Gif|PNG(*.PNG)|*.PNG";
+            saveFileDialog1.FileName = "Untitle";
+            openFileDialog1.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.JPEG)|*.jpg|GIF(*.gif)|*.gif|PNG(*.PNG)|*.PNG";
+            openFileDialog1.FileName = "Untitle";
 
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
@@ -96,6 +110,17 @@ namespace Paint_Crazyland
 
             ActiveTool();
             PensChanged();
+            m_isEdit = false;
+            lblSaveStt.Text = "already";
+            m_firstSave = true;
+            //MessageBox.Show(m_isEdit +"");
+
+            m_undo = new Stack<Bitmap> { };
+            m_redo = new Stack<Bitmap> { };
+            //m_copy = new Stack<Bitmap> { };
+
+            undoToolStripMenuItem.Enabled = false;
+            redoToolStripMenuItem.Enabled = false;
         }
 
         void PensChanged()
@@ -134,8 +159,7 @@ namespace Paint_Crazyland
                 {
                     m_tbZoomValue.Text = "100";
                     m_tbZoom.Value = 0;
-                }                    
-
+                }
                 float val = (float.Parse(m_tbZoomValue.Text)) / 100;
                 m_lbZoom.Text = val.ToString();
                 m_bmWorkSpace = new Bitmap(m_bmSave, (int)(m_bmSave.Width * val), (int)(m_bmSave.Height * val));
@@ -602,6 +626,7 @@ namespace Paint_Crazyland
 
                 default:
                     break;
+
             }
 
             if (m_allowResieWorkSpace)
@@ -627,9 +652,10 @@ namespace Paint_Crazyland
             m_allowResieWorkSpace = false;
             m_workSpace.Invalidate();
             this.Cursor = Cursors.Default;
+
         }
 
-        private void m_workSpace_MouseDown(object sender, MouseEventArgs e)
+        private void m_workSpace_MouseDown(object sender, MouseEventArgs e)//
         {
             m_isMouseUp = false;
             m_isMouseDown = true;
@@ -647,6 +673,18 @@ namespace Paint_Crazyland
             {
                 if (m_isMarqueeFinish)
                 {
+                    #region undo,redo
+                    m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                    if (m_undo.Count != 0)
+                        undoToolStripMenuItem.Enabled = true;
+                    if (m_redo.Count != 0)
+                    {
+                        for (int i = 0; i < m_redo.Count; i++)
+                            m_redo.Pop();
+                        redoToolStripMenuItem.Enabled = false;
+                    }
+                    #endregion
+
                     m_gpTemp.DrawImage(m_bmMarquee, m_rectMarquee);
 
                     m_rectMarquee = Rectangle.Empty;
@@ -669,13 +707,63 @@ namespace Paint_Crazyland
             {
                 case Tools.Eraser:
                     m_allowErase = true;
+                    #region undo,redo
+                    m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                    if (m_undo.Count != 0)
+                        undoToolStripMenuItem.Enabled = true;
+                    if (m_redo.Count != 0)
+                    {
+                        for (int i = 0; i < m_redo.Count; i++)
+                            m_redo.Pop();
+                        redoToolStripMenuItem.Enabled = false;
+                    }
+                    #endregion
                     break;
 
                 case Tools.Marquee:
+                    break;
 
+                case Tools.Brush:
+                    #region undo,redo
+                    m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                    if (m_undo.Count != 0)
+                        undoToolStripMenuItem.Enabled = true;
+                    if (m_redo.Count != 0)
+                    {
+                        for (int i = 0; i < m_redo.Count; i++)
+                            m_redo.Pop();
+                        redoToolStripMenuItem.Enabled = false;
+                    }
+                    #endregion
+                    break;
+
+                case Tools.Shape:
+                    #region undo,redo
+                    m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                    if (m_undo.Count != 0)
+                        undoToolStripMenuItem.Enabled = true;
+                    if (m_redo.Count != 0)
+                    {
+                        for (int i = 0; i < m_redo.Count; i++)
+                            m_redo.Pop();
+                        redoToolStripMenuItem.Enabled = false;
+                    }
+                    #endregion
                     break;
 
                 case Tools.Fill:
+                    #region undo,redo
+                    m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                    if (m_undo.Count != 0)
+                        undoToolStripMenuItem.Enabled = true;
+                    if (m_redo.Count != 0)
+                    {
+                        for (int i = 0; i < m_redo.Count; i++)
+                            m_redo.Pop();
+                        redoToolStripMenuItem.Enabled = false;
+                    }
+                    #endregion
+
                     if (CurrentTool == Tools.Fill)
                     {
                         BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0,0,m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
@@ -712,6 +800,9 @@ namespace Paint_Crazyland
 
                         m_bmWorkSpace.UnlockBits(bmData);
                         m_workSpace.Invalidate();
+                        m_isEdit = true;
+                        lblSaveStt.Text = "not yet";
+                        //MessageBox.Show(m_isEdit + "" + "\nMouse down");
                     }
                     break;
                 default:
@@ -735,7 +826,10 @@ namespace Paint_Crazyland
             if (m_allowResieWorkSpace)
             {
                 if (e.Location.X - m_workSpace.Location.X > 0 && e.Location.Y - m_workSpace.Location.Y > 0)
+                {
                     m_workSpace.Size = new Size(e.Location.X, e.Location.Y);
+                    //m_bmWorkSpace = new Bitmap(m_bmWorkSpace, m_workSpace.Size);
+                }
 
                 //label1.Text = e.Location.ToString();
                 this.Invalidate();
@@ -798,6 +892,7 @@ namespace Paint_Crazyland
                     break;
 
                 case Tools.Text:
+
                     #region -Text-
                     if (!m_textClicked)
                     {
@@ -809,11 +904,25 @@ namespace Paint_Crazyland
                     }
                     else
                     {
+                        #region undo,redo
+                        m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                        if (m_undo.Count != 0)
+                            undoToolStripMenuItem.Enabled = true;
+                        if (m_redo.Count != 0)
+                        {
+                            for (int i = 0; i < m_redo.Count; i++)
+                                m_redo.Pop();
+                            redoToolStripMenuItem.Enabled = false;
+                        }
+                        #endregion
                         m_textClicked = false;
                         m_tbTextTool.Visible = false;
                         m_allowDrawText = true;
                         this.Invalidate();
                     }
+                    m_isEdit = true;
+                    lblSaveStt.Text = "not yet";
+                    //MessageBox.Show(m_isEdit + "\nMouseclick");
                     #endregion
 
                     break;
@@ -838,6 +947,7 @@ namespace Paint_Crazyland
 
         private void m_workSpace_Paint(object sender, PaintEventArgs e)
         {
+            //MessageBox.Show("ASdasda");
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             m_gpTemp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
@@ -1099,6 +1209,9 @@ namespace Paint_Crazyland
             }
 
             e.Graphics.DrawImage(m_bmWorkSpace, new Point(0, 0));
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+            //MessageBox.Show(m_isEdit + "\nPaint");
 
             if (((CurrentTool == Tools.Shape && m_allowDrawPolygon) || CurrentTool == Tools.Eraser || CurrentTool == Tools.Marquee))
                 e.Graphics.DrawImage(m_bmTemp, new Point(0, 0));
@@ -1125,35 +1238,38 @@ namespace Paint_Crazyland
 
         private void saveImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.FileName = "Untitle";
-            saveFileDialog1.Filter = "Bitmap(*.bmp)|*.Bmp|JPEG(*.JPEG)|*.jpg|GIF(*.Gif)|*.Gif|PNG(*.PNG)|*.PNG";
-
-            Bitmap bmSave = new Bitmap(m_workSpace.Width, m_workSpace.Height);
-            Graphics gp = Graphics.FromImage(bmSave);
-            gp.DrawImage(m_bmWorkSpace, new Rectangle(0, 0, bmSave.Width, bmSave.Height), new Rectangle(0, 0, bmSave.Width, bmSave.Height), GraphicsUnit.Pixel);
-
-            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (m_firstSave)
             {
-                switch (saveFileDialog1.FilterIndex)
+                saveImageAsToolStripMenuItem_Click(sender, e);
+                m_firstSave = false;
+                m_isEdit = false;
+                lblSaveStt.Text = "already";
+            }
+            else
+            {
+                switch (m_fileFilterIndex)
                 {
                     case 1:
-                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Bmp);
+                        m_bmWorkSpace.Save(m_saveFile, ImageFormat.Bmp);
                         break;
 
                     case 2:
-                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
+                        m_bmWorkSpace.Save(m_saveFile, ImageFormat.Jpeg);
                         break;
 
                     case 3:
-                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Gif);
+                        m_bmWorkSpace.Save(m_saveFile, ImageFormat.Gif);
                         break;
 
                     case 4:
                     default:
-                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Png);
+                        m_bmWorkSpace.Save(m_saveFile, ImageFormat.Png);
                         break;
                 }
-            }            
+
+                m_isEdit = false;
+                lblSaveStt.Text = "already";
+            }
         }
 
         private void m_tbTextTool_KeyPress(object sender, KeyPressEventArgs e)
@@ -1192,5 +1308,415 @@ namespace Paint_Crazyland
             
         }
         #endregion
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_isEdit)
+            {
+                System.Windows.Forms.DialogResult tmp = MessageBox.Show("Do you want to save it before quit?", "", MessageBoxButtons.YesNoCancel);
+                if (tmp == System.Windows.Forms.DialogResult.Yes)
+                {
+                    saveImageToolStripMenuItem_Click(sender, e);
+                    this.Close();
+                }
+                else if (tmp == System.Windows.Forms.DialogResult.No)
+                {
+                    this.Close();
+                }
+                else
+                {
+
+                }
+            }
+            else
+                this.Close();
+        }
+
+        private void saveImageAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Bitmap bmSave = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+            Graphics gp = Graphics.FromImage(bmSave);
+            gp.DrawImage(m_bmWorkSpace, new Rectangle(0, 0, bmSave.Width, bmSave.Height), new Rectangle(0, 0, bmSave.Width, bmSave.Height), GraphicsUnit.Pixel);
+            //gp.DrawImage(m_bmWorkSpace, 0, 0);
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //MessageBox.Show(saveFileDialog1.FileName);
+                switch (saveFileDialog1.FilterIndex)
+                {
+                    case 1:
+                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Bmp);
+                        break;
+
+                    case 2:
+                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
+                        break;
+
+                    case 3:
+                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Gif);
+                        break;
+
+                    case 4:
+                    default:
+                        bmSave.Save(saveFileDialog1.FileName, ImageFormat.Png);
+                        break;
+                }
+            }
+            m_saveFile = saveFileDialog1.FileName;
+            m_fileFilterIndex = saveFileDialog1.FilterIndex;
+            m_isEdit = false;
+            lblSaveStt.Text = "already";
+            m_firstSave = false;
+        }
+
+        private void openImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_isEdit)
+            {
+                System.Windows.Forms.DialogResult tmp = MessageBox.Show("Do you want to save it before open file?", "", MessageBoxButtons.YesNoCancel);
+                if (tmp == System.Windows.Forms.DialogResult.Yes)
+                {
+                    saveImageToolStripMenuItem_Click(sender, e);
+                    if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        m_saveFile = openFileDialog1.FileName;
+                        m_fileFilterIndex = openFileDialog1.FilterIndex;
+                        Bitmap bmopen = new Bitmap(m_saveFile);
+                        m_bmWorkSpace = new Bitmap(bmopen);
+                        m_workSpace.Size = new Size(bmopen.Size.Width, bmopen.Size.Height);
+                        m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                        //Graphics gp = Graphics.FromImage(m_bmWorkSpace);
+                        Graphics im = m_workSpace.CreateGraphics();
+                        //gp.DrawImage(bmopen, 0, 0);
+                        im.DrawImage(m_bmWorkSpace, 0, 0);
+                        m_firstSave = false;
+                        m_isEdit = false;
+                        lblSaveStt.Text = "already";
+                    }
+                }
+                else if (tmp == System.Windows.Forms.DialogResult.No)
+                {
+                    if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        m_saveFile = openFileDialog1.FileName;
+                        m_fileFilterIndex = openFileDialog1.FilterIndex;
+                        Bitmap bmopen = new Bitmap(m_saveFile);
+                        m_bmWorkSpace = new Bitmap(bmopen);
+                        m_workSpace.Size = new Size(bmopen.Size.Width, bmopen.Size.Height);
+                        //Graphics gp = Graphics.FromImage(m_bmWorkSpace);
+                        m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                        Graphics im = m_workSpace.CreateGraphics();
+                        //gp.DrawImage(bmopen, 0, 0);
+                        im.DrawImage(m_bmWorkSpace, 0, 0);
+                        m_firstSave = false;
+                        m_isEdit = false;
+                        lblSaveStt.Text = "already";
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            else
+                if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    m_saveFile = openFileDialog1.FileName;
+                    m_fileFilterIndex = openFileDialog1.FilterIndex;
+                    Bitmap bmopen = new Bitmap(m_saveFile);
+                    m_bmWorkSpace = new Bitmap(bmopen);
+                    m_workSpace.Size = new Size(bmopen.Size.Width, bmopen.Size.Height);
+                    m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                    //Graphics gp = Graphics.FromImage(m_bmWorkSpace);
+                    Graphics im = m_workSpace.CreateGraphics();
+                    //gp.DrawImage(bmopen, 0, 0);
+                    im.DrawImage(m_bmWorkSpace, 0, 0);
+                    m_firstSave = false;
+                    m_isEdit = false;
+                    lblSaveStt.Text = "already";
+                }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_isEdit)
+            {
+                System.Windows.Forms.DialogResult tmp = MessageBox.Show("Do you want to save it before create new?", "", MessageBoxButtons.YesNoCancel);
+                if (tmp == System.Windows.Forms.DialogResult.Yes)
+                {
+                    saveImageToolStripMenuItem_Click(sender, e);
+                    Graphics im = m_workSpace.CreateGraphics();
+                    m_gpTemp.Clear(Color.White);
+                    im.Clear(Color.White);
+                    m_firstSave = true;
+                    m_isEdit = false;
+                    lblSaveStt.Text = "already";
+                    m_saveFile = "";
+                }
+                else if (tmp == System.Windows.Forms.DialogResult.No)
+                {
+                    Graphics im = m_workSpace.CreateGraphics();
+                    m_gpTemp.Clear(Color.White);
+                    im.Clear(Color.White);
+                    m_firstSave = true;
+                    m_isEdit = false;
+                    lblSaveStt.Text = "already";
+                    m_saveFile = "";
+                }
+                else
+                {
+
+                }
+            }
+            else
+                {
+                    Graphics im = m_workSpace.CreateGraphics();
+                    m_gpTemp.Clear(Color.White);
+                    im.Clear(Color.White);
+                    m_firstSave = true;
+                    m_isEdit = false;
+                    lblSaveStt.Text = "already";
+                    m_saveFile = "";
+                }
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_undo.Count != 0)
+            {
+                //neu dang co text box
+                if (m_textClicked)
+                {
+                    m_tbTextTool.Text = "";
+                    m_textClicked = false;
+                    m_tbTextTool.Visible = false;
+                    m_allowDrawText = false;
+                    this.Invalidate();
+                }
+                //neu dang cat
+                if (m_isMarqueeFinish)
+                {
+                    m_rectMarquee = Rectangle.Empty;
+                    m_bmMarquee = null;
+                    m_isMouseUpMarqueeShow = false;
+                    m_isMarqueeChosen = false;
+                    m_isMarqueeChosing = false;
+                    m_isMarqueeFinish = false;
+                }
+
+                //m_bmWorkSpace = new Bitmap(m_bmWorkSpace, m_workSpace.Size);
+                m_redo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                redoToolStripMenuItem.Enabled = true;
+                Graphics im = m_workSpace.CreateGraphics();
+                Bitmap undo = new Bitmap(m_undo.Pop());
+                //Bitmap undo = new Bitmap("C:/Users/thinh_000/Desktop/dfadfsdfsdfs.PNG");
+                //m_bmWorkSpace = new Bitmap(undo, undo.Size);
+                m_workSpace.Size = new Size(undo.Size.Width, undo.Size.Height);
+
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.Clear(Color.White);
+                //m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+
+                m_gpTemp.DrawImage(undo, 0, 0);
+                im.DrawImage(m_bmWorkSpace, 0, 0);
+
+                if (m_undo.Count == 0)
+                    undoToolStripMenuItem.Enabled = false;
+
+                m_isEdit = true;
+                lblSaveStt.Text = "not yet";
+            }
+            else
+                undoToolStripMenuItem.Enabled = false;
+            
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_redo.Count != 0)
+            {
+                //m_bmWorkSpace = new Bitmap(m_bmWorkSpace, m_workSpace.Size);
+                m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+                undoToolStripMenuItem.Enabled = true;
+                Graphics im = m_workSpace.CreateGraphics();
+                Bitmap redo = new Bitmap(m_redo.Pop());
+                //m_bmWorkSpace = new Bitmap(redo, redo.Size);
+                m_workSpace.Size = new Size(redo.Size.Width, redo.Size.Height);
+
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.Clear(Color.White);
+                //m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+
+                m_gpTemp.DrawImage(redo, 0, 0);
+                im.DrawImage(m_bmWorkSpace, 0, 0);
+                //this.Invalidate();
+                if (m_redo.Count == 0)
+                    redoToolStripMenuItem.Enabled = false;
+
+                m_isEdit = true;
+                lblSaveStt.Text = "not yet";
+            }
+            else
+                redoToolStripMenuItem.Enabled = false;
+        }
+
+        private void m_tbZoom_MouseDown(object sender, MouseEventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+        }
+
+        private void toolBoxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (toolBoxToolStripMenuItem.Checked)
+                m_toolBar.Show();
+            else
+                m_toolBar.Hide();
+
+        }
+
+        private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (statusBarToolStripMenuItem.Checked)
+                m_statusBar.Show();
+            else
+                m_statusBar.Hide();
+        }
+
+        private void leftToRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            m_bmWorkSpace.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            m_workSpace.Size = new Size(m_bmWorkSpace.Size.Width, m_bmWorkSpace.Size.Height);
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void rightToLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            m_bmWorkSpace.RotateFlip(RotateFlipType.Rotate90FlipXY);
+            m_workSpace.Size = new Size(m_bmWorkSpace.Size.Width, m_bmWorkSpace.Size.Height);
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            m_bmWorkSpace.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            m_workSpace.Size = new Size(m_bmWorkSpace.Size.Width, m_bmWorkSpace.Size.Height);
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void grayScaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            for(int i = 0; i < m_bmWorkSpace.Width; i++)
+                for (int j = 0; j < m_bmWorkSpace.Height; j++)
+                {
+                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    int grayScale = (int)(pixelColor.R * 0.3086) + (int)(pixelColor.G * 0.6094) + (int)(pixelColor.B * 0.0820);
+                    Color newColor = Color.FromArgb(grayScale,grayScale,grayScale);
+                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                }
+
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void invertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            for (int i = 0; i < m_bmWorkSpace.Width; i++)
+                for (int j = 0; j < m_bmWorkSpace.Height; j++)
+                {
+                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb(255-pixelColor.R, 255-pixelColor.G, 255-pixelColor.B);
+                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                }
+
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
     }
 }

@@ -18,3 +18,12 @@ F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.csprojResolveAssemblyR
 F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint_Crazyland.Form1.resources
 F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint_Crazyland.Properties.Resources.resources
 F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.csproj.GenerateResource.Cache
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\bin\Debug\Paint-Crazyland.exe.config
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.exe
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.pdb
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\bin\Debug\Paint-Crazyland.exe
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\bin\Debug\Paint-Crazyland.pdb
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.csprojResolveAssemblyReference.cache
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint_Crazyland.Form1.resources
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint_Crazyland.Properties.Resources.resources
+C:\Users\thinh_000\Documents\GitHub\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.csproj.GenerateResource.Cache
