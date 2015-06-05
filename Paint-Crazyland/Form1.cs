@@ -72,7 +72,7 @@ namespace Paint_Crazyland
 
             saveFileDialog1.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.JPEG)|*.jpg|GIF(*.Gif)|*.Gif|PNG(*.PNG)|*.PNG";
             saveFileDialog1.FileName = "Untitle";
-            openFileDialog1.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.JPEG)|*.jpg|GIF(*.gif)|*.gif|PNG(*.PNG)|*.PNG";
+            openFileDialog1.Filter = "Bitmap(*.bmp)|*.bmp|JPEG(*.JPEG)|*.jpg|GIF(*.gif)|*.gif|PNG(*.PNG)|*.PNG | All Files|*.*";
             openFileDialog1.FileName = "Untitle";
 
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -1741,6 +1741,7 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
             for (int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
@@ -1876,7 +1877,7 @@ namespace Paint_Crazyland
 
         private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("PAINT-CRAZYLAND\nĐồ án môm: Lập trình trực quan\nGiảng viên lý thuyết: Lê Thanh Trọng\nGiảng viên hướng dẫn thực hành: Huỳnh Tuấn Anh\nSinh viên thực hiện: Lê Tấn Thịnh, Bùi Đình Lộc Thọ","About");
+            MessageBox.Show("PAINT\n\nĐồ án môm: Lập trình trực quan\nGiảng viên lý thuyết: Thầy Lê Thanh Trọng\nGiảng viên hướng dẫn thực hành: Thầy Huỳnh Tuấn Anh\nSinh viên thực hiện: \nLê Tấn Thịnh 13520836 \nBùi Đình Lộc Thọ 13520844","About");
         }
     }
 }
