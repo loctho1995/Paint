@@ -106,6 +106,12 @@ namespace Paint_Crazyland
                 {
                     m_isKeyDown = true;
                     m_keys = e.KeyCode;
+                    
+                };
+
+            this.KeyPress += (o, e) =>
+                {
+                    
                 };
 
             ActiveTool();
@@ -121,6 +127,11 @@ namespace Paint_Crazyland
 
             undoToolStripMenuItem.Enabled = false;
             redoToolStripMenuItem.Enabled = false;
+            
+            lblWidth.Text = m_workSpace.Size.Width.ToString();
+            lblHeight.Text = m_workSpace.Size.Height.ToString();
+            //m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+            //m_tbHeight.Text = m_workSpace.Size.Height.ToString();
         }
 
         void PensChanged()
@@ -161,7 +172,6 @@ namespace Paint_Crazyland
                     m_tbZoom.Value = 0;
                 }
                 float val = (float.Parse(m_tbZoomValue.Text)) / 100;
-                m_lbZoom.Text = val.ToString();
                 m_bmWorkSpace = new Bitmap(m_bmSave, (int)(m_bmSave.Width * val), (int)(m_bmSave.Height * val));
                 m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
                 m_workSpace.Size = m_bmWorkSpace.Size;
@@ -188,6 +198,11 @@ namespace Paint_Crazyland
             m_lbZoom.Visible = false;
             m_tbZoom.Visible = false;
             m_tbZoomValue.Visible = false;
+
+            m_textClicked = false;
+            m_tbTextTool.Visible = false;
+            m_allowDrawText = true;
+            m_tbTextTool.Text = "";
 
             if (CurrentTool != Tools.Zoom)
                 m_isFistTimeZoom = true;
@@ -828,7 +843,10 @@ namespace Paint_Crazyland
                 if (e.Location.X - m_workSpace.Location.X > 0 && e.Location.Y - m_workSpace.Location.Y > 0)
                 {
                     m_workSpace.Size = new Size(e.Location.X, e.Location.Y);
-                    //m_bmWorkSpace = new Bitmap(m_bmWorkSpace, m_workSpace.Size);
+                    m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+                    m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+                    lblWidth.Text = m_workSpace.Size.Width.ToString();
+                    lblHeight.Text = m_workSpace.Size.Height.ToString();
                 }
 
                 //label1.Text = e.Location.ToString();
@@ -853,10 +871,6 @@ namespace Paint_Crazyland
                     m_workSpace.Invalidate();
                     break;
 
-                case Tools.Marquee:
-
-                    break;
-
                 case Tools.Zoom:
                     break;
                 case Tools.Fill:
@@ -877,20 +891,6 @@ namespace Paint_Crazyland
         {
             switch (CurrentTool)
             {
-                case Tools.Brush:
-                    break;
-
-                case Tools.Eraser:
-
-                    break;
-
-                case Tools.Marquee:
-                    break;
-                case Tools.Zoom:
-                    break;
-                case Tools.Fill:
-                    break;
-
                 case Tools.Text:
 
                     #region -Text-
@@ -927,17 +927,11 @@ namespace Paint_Crazyland
 
                     break;
 
-                case Tools.Shape:
-                    break;
-
                 case Tools.ColorPicker:
                     m_btColorPickerShow.BackColor = m_bmWorkSpace.GetPixel(e.X, e.Y);
                     m_btLeftColor.BackColor = m_btColorPickerShow.BackColor;
                     PensChanged();
                     this.Invalidate();
-                    break;
-
-                case Tools.None:
                     break;
 
                 default:
@@ -1677,15 +1671,30 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
+            //BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            //IntPtr intptr = bmData.Scan0;
+            //int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            //byte[] bytes = new byte[length];
+            //System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
             for(int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
+                    //byte grayScale = (byte)((bytes[j + i * m_bmWorkSpace.Width * 4 + 1] + bytes[j + i * m_bmWorkSpace.Width * 4 + 2] + bytes[j + i * m_bmWorkSpace.Width * 4 + 3]) / 3);
+                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 1] = grayScale;
+                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 2] = grayScale;
+                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 3] = grayScale;
                     Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
                     int grayScale = (int)(pixelColor.R * 0.3086) + (int)(pixelColor.G * 0.6094) + (int)(pixelColor.B * 0.0820);
-                    Color newColor = Color.FromArgb(grayScale,grayScale,grayScale);
+                    Color newColor = Color.FromArgb(grayScale, grayScale, grayScale);
                     m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+            //System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+
+            //m_bmWorkSpace.UnlockBits(bmData);
+            //m_workSpace.Invalidate();
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
             m_isEdit = true;
@@ -1713,10 +1722,162 @@ namespace Paint_Crazyland
                     m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
             m_isEdit = true;
             lblSaveStt.Text = "not yet";
+        }
+
+        private void redToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            for (int i = 0; i < m_bmWorkSpace.Width; i++)
+                for (int j = 0; j < m_bmWorkSpace.Height; j++)
+                {
+                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb(255, pixelColor.G, pixelColor.B);
+                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                }
+
+
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void greenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            for (int i = 0; i < m_bmWorkSpace.Width; i++)
+                for (int j = 0; j < m_bmWorkSpace.Height; j++)
+                {
+                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb(pixelColor.R, 255, pixelColor.B);
+                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                }
+
+
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void blueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            #region undo,redo
+            m_undo.Push(new Bitmap(m_bmWorkSpace, m_workSpace.Size));
+            if (m_undo.Count != 0)
+                undoToolStripMenuItem.Enabled = true;
+            if (m_redo.Count != 0)
+            {
+                for (int i = 0; i < m_redo.Count; i++)
+                    m_redo.Pop();
+                redoToolStripMenuItem.Enabled = false;
+            }
+            #endregion
+            for (int i = 0; i < m_bmWorkSpace.Width; i++)
+                for (int j = 0; j < m_bmWorkSpace.Height; j++)
+                {
+                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb(pixelColor.R, pixelColor.G, 255);
+                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                }
+
+
+            Graphics im = m_workSpace.CreateGraphics();
+            im.DrawImage(m_bmWorkSpace, 0, 0);
+            m_isEdit = true;
+            lblSaveStt.Text = "not yet";
+        }
+
+        private void sizeEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sizeEditToolStripMenuItem.Checked)
+                pnlSize.Show();
+            else
+                pnlSize.Hide();
+        }
+
+        private void m_tbWidth_TextChanged(object sender, EventArgs e)
+        {
+            if (m_tbHeight.Text == "")
+                m_tbHeight.Text = "0";
+
+            if (m_tbWidth.Text != "0" && m_tbHeight.Text != "0" && !m_allowResieWorkSpace)
+            {
+
+                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
+
+                //resize
+                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_gpTemp.Clear(Color.White);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+                m_bmSave = new Bitmap(m_bmWorkSpace);
+
+                lblWidth.Text = m_workSpace.Size.Width.ToString();
+                lblHeight.Text = m_workSpace.Size.Height.ToString();
+            }
+        }
+
+        private void m_tbHeight_TextChanged(object sender, EventArgs e)
+        {
+            if (m_tbHeight.Text == "")
+                m_tbHeight.Text = "0";
+
+            if (m_tbWidth.Text != "0" && m_tbHeight.Text != "0" && !m_allowResieWorkSpace)
+            {
+
+                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
+
+                //resize
+                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_gpTemp.Clear(Color.White);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+                m_bmSave = new Bitmap(m_bmWorkSpace);
+
+                lblWidth.Text = m_workSpace.Size.Width.ToString();
+                lblHeight.Text = m_workSpace.Size.Height.ToString();
+            }
+        }
+
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("PAINT-CRAZYLAND\nĐồ án môm: Lập trình trực quan\nGiảng viên lý thuyết: Lê Thanh Trọng\nGiảng viên hướng dẫn thực hành: Huỳnh Tuấn Anh\nSinh viên thực hiện: Lê Tấn Thịnh, Bùi Đình Lộc Thọ","About");
         }
     }
 }
