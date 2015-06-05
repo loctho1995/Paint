@@ -620,11 +620,11 @@ namespace Paint_Crazyland
                 m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
                 int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
                 int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
-
+                                        
                 Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
-                m_gpTemp.Clear(Color.White);
+                //m_gpTemp.Clear(Color.White);
                 m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
-                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace); 
                 m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
                 m_bmSave = new Bitmap(m_bmWorkSpace);
             }
@@ -715,7 +715,6 @@ namespace Paint_Crazyland
                         */
 
                         System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
-
                         m_bmWorkSpace.UnlockBits(bmData);
                         m_workSpace.Invalidate();
                     }
