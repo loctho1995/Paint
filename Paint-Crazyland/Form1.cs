@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Paint_Crazyland
@@ -268,8 +267,11 @@ namespace Paint_Crazyland
                     m_cbShapes.Visible = true;
                     m_tbSides.Visible = true;
                     m_lbSides.Visible = true;
+                    m_lbSize.Visible = true;
+                    m_tbSize.Visible = true;
 
-                    m_lbShapes.Location = m_lbSize.Location;
+
+                    m_lbShapes.Location = new Point(m_tbSize.Location.X + m_tbSize.Width, m_lbShapes.Location.Y);
                     m_cbShapes.Location = new Point(m_lbShapes.Location.X + m_lbShapes.Width, m_cbShapes.Location.Y);
                     m_lbSides.Location = new Point(m_cbShapes.Location.X + m_cbShapes.Width, m_lbSides.Location.Y);
                     m_tbSides.Location = new Point(m_lbSides.Location.X + m_lbSides.Width, m_tbSides.Location.Y);
@@ -372,6 +374,9 @@ namespace Paint_Crazyland
 
         private void FillColor(int x, int y, byte[] bytes, Color color, int width, int height, Color colorFill)
         {
+            if (ColorEquals(colorFill, Color.White))
+                return;
+
             FloodFill(x, y, bytes, width, height, colorFill);
         }
 
@@ -392,7 +397,6 @@ namespace Paint_Crazyland
 
                 while (ColorEquals(Color.White, GetPixel(px, py, bytes, width)) && py > 0)
                 {
-                    //Console.WriteLine("s");
                     py--;
                 }
 
@@ -947,8 +951,10 @@ namespace Paint_Crazyland
             Graphics gp = Graphics.FromImage(m_bmTemp);
             gp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             gp.Clear(Color.Transparent);
+            int size = 1;
 
-            int size = int.Parse(m_tbSize.Text);
+            if (m_tbSize.Text != "")
+                size = int.Parse(m_tbSize.Text);
 
             switch (CurrentTool)
             {
