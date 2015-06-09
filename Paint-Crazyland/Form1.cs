@@ -55,7 +55,7 @@ namespace Paint_Crazyland
                     m_listCallBackPoint; //danh sach cac vi tri can xet lai trong fill
         Graphics m_gpTemp;
         MouseButtons m_mouseButton;
-        int m_grid = 15; //gioi han size khi re chuot vao resize workspace
+        int m_grid = 50; //gioi han size khi re chuot vao resize workspace
         int[,] m_arrayCheckFill; // kiem tra nhung vi tri da fill
 
         string m_saveFile; //duong dan file duoc mo hay file da luu
@@ -65,6 +65,7 @@ namespace Paint_Crazyland
         Stack<Bitmap> m_redo;
         //Stack<Bitmap> m_copy;
 
+        #region - METHODS -
         public Form1()
         {
             InitializeComponent();
@@ -129,8 +130,10 @@ namespace Paint_Crazyland
             
             lblWidth.Text = m_workSpace.Size.Width.ToString();
             lblHeight.Text = m_workSpace.Size.Height.ToString();
-            //m_tbWidth.Text = m_workSpace.Size.Width.ToString();
-            //m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+            m_allowResieWorkSpace = true;
+            m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+            m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+            m_allowResieWorkSpace = false;
         }
 
         void PensChanged()
@@ -305,6 +308,7 @@ namespace Paint_Crazyland
                 m_tbTextTool.Width = TextRenderer.MeasureText(m_tbTextTool.Text, m_tbTextTool.Font).Width + padding + border;
         }
 
+        #endregion
         //ham lay pixel tu bmWorkspace
         #region -FILL TOOL-
         private Color GetPixel(int x, int y, byte[] bytes, int width)
@@ -853,7 +857,7 @@ namespace Paint_Crazyland
                 }
 
                 //label1.Text = e.Location.ToString();
-                this.Invalidate();
+                //this.Invalidate();
             }
             #endregion
 
@@ -1306,8 +1310,63 @@ namespace Paint_Crazyland
         {
             
         }
+
+        private void m_tbWidth_TextChanged(object sender, EventArgs e)
+        {
+            if (m_tbWidth.Text == "")
+                m_tbWidth.Text = "0";
+
+            if (int.Parse(m_tbWidth.Text) > 0 && int.Parse(m_tbHeight.Text) > 0 && !m_allowResieWorkSpace)
+            {
+
+                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
+
+                //resize
+                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_gpTemp.Clear(Color.White);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+                m_bmSave = new Bitmap(m_bmWorkSpace);
+
+                lblWidth.Text = m_workSpace.Size.Width.ToString();
+                lblHeight.Text = m_workSpace.Size.Height.ToString();
+            }
+        }
+
+        private void m_tbHeight_TextChanged(object sender, EventArgs e)
+        {
+            if (m_tbHeight.Text == "")
+                m_tbHeight.Text = "0";
+
+            if (m_tbWidth.Text != "0" && m_tbHeight.Text != "0" && !m_allowResieWorkSpace)
+            {
+
+                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
+
+                //resize
+                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
+                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
+                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
+
+                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
+                m_gpTemp.Clear(Color.White);
+                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
+                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
+                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
+                m_bmSave = new Bitmap(m_bmWorkSpace);
+
+                lblWidth.Text = m_workSpace.Size.Width.ToString();
+                lblHeight.Text = m_workSpace.Size.Height.ToString();
+            }
+        }
         #endregion
 
+        #region - TOOLSTRIP MENU EVENTS -
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (m_isEdit)
@@ -1390,6 +1449,10 @@ namespace Paint_Crazyland
                         m_firstSave = false;
                         m_isEdit = false;
                         lblSaveStt.Text = "already";
+                        m_allowResieWorkSpace = true;
+                        m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+                        m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+                        m_allowResieWorkSpace = false;
                     }
                 }
                 else if (tmp == System.Windows.Forms.DialogResult.No)
@@ -1409,6 +1472,10 @@ namespace Paint_Crazyland
                         m_firstSave = false;
                         m_isEdit = false;
                         lblSaveStt.Text = "already";
+                        m_allowResieWorkSpace = true;
+                        m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+                        m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+                        m_allowResieWorkSpace = false;
                     }
                 }
                 else
@@ -1432,6 +1499,10 @@ namespace Paint_Crazyland
                     m_firstSave = false;
                     m_isEdit = false;
                     lblSaveStt.Text = "already";
+                    m_allowResieWorkSpace = true;
+                    m_tbWidth.Text = m_workSpace.Size.Width.ToString();
+                    m_tbHeight.Text = m_workSpace.Size.Height.ToString();
+                    m_allowResieWorkSpace = false;
                 }
         }
 
@@ -1613,6 +1684,7 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
             m_bmWorkSpace.RotateFlip(RotateFlipType.Rotate90FlipNone);
             m_workSpace.Size = new Size(m_bmWorkSpace.Size.Width, m_bmWorkSpace.Size.Height);
             Graphics im = m_workSpace.CreateGraphics();
@@ -1677,28 +1749,24 @@ namespace Paint_Crazyland
             }
             #endregion
 
-            //BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
-            //IntPtr intptr = bmData.Scan0;
-            //int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
-            //byte[] bytes = new byte[length];
-            //System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+            BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            IntPtr intptr = bmData.Scan0;
+            int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            byte[] bytes = new byte[length];
+            System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
 
             for(int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
-                    //byte grayScale = (byte)((bytes[j + i * m_bmWorkSpace.Width * 4 + 1] + bytes[j + i * m_bmWorkSpace.Width * 4 + 2] + bytes[j + i * m_bmWorkSpace.Width * 4 + 3]) / 3);
-                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 1] = grayScale;
-                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 2] = grayScale;
-                    //bytes[j + i * m_bmWorkSpace.Width * 4 + 3] = grayScale;
-                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
-                    int grayScale = (int)(pixelColor.R * 0.3086) + (int)(pixelColor.G * 0.6094) + (int)(pixelColor.B * 0.0820);
+                    Color pixelColor = GetPixel(i, j, bytes, m_bmWorkSpace.Width); //m_bmWorkSpace.GetPixel(i, j);
+                    int grayScale = Convert.ToByte(pixelColor.R * 0.287 + pixelColor.G * 0.599 + pixelColor.B * 0.114);
                     Color newColor = Color.FromArgb(grayScale, grayScale, grayScale);
-                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                    SetPixel(i, j, bytes, m_bmWorkSpace.Width, newColor);
                 }
 
-            //System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+            System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
 
-            //m_bmWorkSpace.UnlockBits(bmData);
+            m_bmWorkSpace.UnlockBits(bmData);
             //m_workSpace.Invalidate();
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
@@ -1719,14 +1787,24 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
+            BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            IntPtr intptr = bmData.Scan0;
+            int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            byte[] bytes = new byte[length];
+            System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
             for (int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
-                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
+                    Color pixelColor = GetPixel(i, j, bytes, m_bmWorkSpace.Width);
                     Color newColor = Color.FromArgb(255-pixelColor.R, 255-pixelColor.G, 255-pixelColor.B);
-                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                    SetPixel(i, j, bytes, m_bmWorkSpace.Width, newColor);
+                    //m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+            System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+            m_bmWorkSpace.UnlockBits(bmData);
 
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
@@ -1748,14 +1826,22 @@ namespace Paint_Crazyland
             }
             #endregion
 
+            BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            IntPtr intptr = bmData.Scan0;
+            int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            byte[] bytes = new byte[length];
+            System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
             for (int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
-                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
-                    Color newColor = Color.FromArgb(255, pixelColor.G, pixelColor.B);
-                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                    Color pixelColor = GetPixel(i, j, bytes, m_bmWorkSpace.Width); //m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb(pixelColor.R, (int)(pixelColor.G * 0.5f), (int)(pixelColor.B * 0.5f));
+                    SetPixel(i, j, bytes, m_bmWorkSpace.Width, newColor); //m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+            System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+            m_bmWorkSpace.UnlockBits(bmData);
 
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
@@ -1776,14 +1862,23 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
+            BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            IntPtr intptr = bmData.Scan0;
+            int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            byte[] bytes = new byte[length];
+            System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
             for (int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
-                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
-                    Color newColor = Color.FromArgb(pixelColor.R, 255, pixelColor.B);
-                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                    Color pixelColor = GetPixel(i, j, bytes, m_bmWorkSpace.Width); //m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb((int)(pixelColor.R * 0.5f), pixelColor.G, (int)(pixelColor.B * 0.5f));
+                    SetPixel(i, j, bytes, m_bmWorkSpace.Width, newColor);  //m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+            System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+            m_bmWorkSpace.UnlockBits(bmData);
 
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
@@ -1804,14 +1899,23 @@ namespace Paint_Crazyland
                 redoToolStripMenuItem.Enabled = false;
             }
             #endregion
+
+            BitmapData bmData = m_bmWorkSpace.LockBits(new Rectangle(0, 0, m_bmWorkSpace.Width, m_bmWorkSpace.Height), ImageLockMode.ReadWrite, m_bmWorkSpace.PixelFormat);
+            IntPtr intptr = bmData.Scan0;
+            int length = m_bmWorkSpace.Height * Math.Abs(bmData.Stride);
+            byte[] bytes = new byte[length];
+            System.Runtime.InteropServices.Marshal.Copy(intptr, bytes, 0, length);
+
             for (int i = 0; i < m_bmWorkSpace.Width; i++)
                 for (int j = 0; j < m_bmWorkSpace.Height; j++)
                 {
-                    Color pixelColor = m_bmWorkSpace.GetPixel(i, j);
-                    Color newColor = Color.FromArgb(pixelColor.R, pixelColor.G, 255);
-                    m_bmWorkSpace.SetPixel(i, j, newColor);
+                    Color pixelColor = GetPixel(i, j, bytes, m_bmWorkSpace.Width); //m_bmWorkSpace.GetPixel(i, j);
+                    Color newColor = Color.FromArgb((int)(pixelColor.R * 0.5f), (int)(pixelColor.G * 0.5f), pixelColor.B);
+                    SetPixel(i, j, bytes, m_bmWorkSpace.Width, newColor);//m_bmWorkSpace.SetPixel(i, j, newColor);
                 }
 
+            System.Runtime.InteropServices.Marshal.Copy(bytes, 0, intptr, length);
+            m_bmWorkSpace.UnlockBits(bmData);
 
             Graphics im = m_workSpace.CreateGraphics();
             im.DrawImage(m_bmWorkSpace, 0, 0);
@@ -1827,63 +1931,10 @@ namespace Paint_Crazyland
                 pnlSize.Hide();
         }
 
-        private void m_tbWidth_TextChanged(object sender, EventArgs e)
-        {
-            if (m_tbHeight.Text == "")
-                m_tbHeight.Text = "0";
-
-            if (m_tbWidth.Text != "0" && m_tbHeight.Text != "0" && !m_allowResieWorkSpace)
-            {
-
-                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
-
-                //resize
-                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
-                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
-                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
-
-                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
-                m_gpTemp.Clear(Color.White);
-                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
-                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
-                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
-                m_bmSave = new Bitmap(m_bmWorkSpace);
-
-                lblWidth.Text = m_workSpace.Size.Width.ToString();
-                lblHeight.Text = m_workSpace.Size.Height.ToString();
-            }
-        }
-
-        private void m_tbHeight_TextChanged(object sender, EventArgs e)
-        {
-            if (m_tbHeight.Text == "")
-                m_tbHeight.Text = "0";
-
-            if (m_tbWidth.Text != "0" && m_tbHeight.Text != "0" && !m_allowResieWorkSpace)
-            {
-
-                m_workSpace.Size = new Size(int.Parse(m_tbWidth.Text), int.Parse(m_tbHeight.Text));
-
-                //resize
-                m_isFistTimeZoom = true; // sau khi resize cho = true de luu lai bitmap
-                int width = m_workSpace.Width > m_bmWorkSpace.Width ? m_bmWorkSpace.Width : m_workSpace.Width;
-                int heigth = m_workSpace.Height > m_bmWorkSpace.Height ? m_bmWorkSpace.Height : m_workSpace.Height;
-
-                Bitmap bmtemp = m_bmWorkSpace.Clone(new Rectangle(0, 0, width, heigth), m_bmWorkSpace.PixelFormat);
-                m_gpTemp.Clear(Color.White);
-                m_bmWorkSpace = new Bitmap(m_workSpace.Width, m_workSpace.Height);
-                m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
-                m_gpTemp.DrawImage(bmtemp, new Point(0, 0));
-                m_bmSave = new Bitmap(m_bmWorkSpace);
-
-                lblWidth.Text = m_workSpace.Size.Width.ToString();
-                lblHeight.Text = m_workSpace.Size.Height.ToString();
-            }
-        }
-
         private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("PAINT\n\nĐồ án môm: Lập trình trực quan\nGiảng viên lý thuyết: Thầy Lê Thanh Trọng\nGiảng viên hướng dẫn thực hành: Thầy Huỳnh Tuấn Anh\nSinh viên thực hiện: \nLê Tấn Thịnh 13520836 \nBùi Đình Lộc Thọ 13520844","About");
         }
+        #endregion
     }
 }
