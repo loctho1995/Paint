@@ -572,7 +572,7 @@ namespace Paint_Crazyland
                     if (m_isMarqueeFinish)
                     {
                         Point realPoint = new Point(m_rectMarquee.Location.X + (m_mouseLocation.X - m_mouseFixedLocation.X),
-                                                            m_rectMarquee.Location.Y + (m_mouseLocation.Y - m_mouseFixedLocation.Y));
+                                                            m_rectMarquee.Location.Y + (m_mouseLocation.Y - m_mouseFixedLocation.Y));                        
 
                         m_rectMarquee = new Rectangle(realPoint, m_rectMarquee.Size);
                         m_mouseLocation = m_mouseFixedLocation = e.Location;
@@ -609,7 +609,9 @@ namespace Paint_Crazyland
                         m_isMarqueeChosing = false;
                         m_isMarqueeFinish = true;
 
-                        if (m_rectMarquee.Width != 0 && m_rectMarquee.Height != 0)
+                        //m_rectMarquee = new Rectangle(m_rectMarquee.X, m_rectMarquee.Y, m_rectMarquee.Width, m_rectMarquee.Height);
+
+                        if (m_rectMarquee.Width > 0 && m_rectMarquee.Height > 0)
                         {
                             m_bmMarquee = m_bmWorkSpace.Clone(m_rectMarquee, m_bmWorkSpace.PixelFormat);
                             m_gpTemp.FillRectangle(Brushes.White, m_rectMarquee);
@@ -951,6 +953,7 @@ namespace Paint_Crazyland
             //MessageBox.Show("ASdasda");
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             m_gpTemp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            m_bmTemp = new Bitmap(m_bmWorkSpace.Width, m_bmWorkSpace.Height);
 
             Graphics gp = Graphics.FromImage(m_bmTemp);
             gp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -1043,7 +1046,7 @@ namespace Paint_Crazyland
                         gp.DrawPolygon(pen, points);
                     }
 
-                    if (m_isMouseUpMarqueeShow)
+                    if (m_isMouseUpMarqueeShow && m_bmMarquee != null)
                     {
                         gp.DrawImage(m_bmMarquee, m_rectMarquee.Location);
                         gp.DrawRectangle(pen, m_rectMarquee);
@@ -1431,6 +1434,7 @@ namespace Paint_Crazyland
             if (m_isEdit)
             {
                 System.Windows.Forms.DialogResult tmp = MessageBox.Show("Do you want to save it before open file?", "", MessageBoxButtons.YesNoCancel);
+
                 if (tmp == System.Windows.Forms.DialogResult.Yes)
                 {
                     saveImageToolStripMenuItem_Click(sender, e);
@@ -1463,6 +1467,7 @@ namespace Paint_Crazyland
                         m_fileFilterIndex = openFileDialog1.FilterIndex;
                         Bitmap bmopen = new Bitmap(m_saveFile);
                         m_bmWorkSpace = new Bitmap(bmopen);
+                        MessageBox.Show(m_bmWorkSpace.Size.ToString());
                         m_workSpace.Size = new Size(bmopen.Size.Width, bmopen.Size.Height);
                         //Graphics gp = Graphics.FromImage(m_bmWorkSpace);
                         m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
@@ -1489,8 +1494,9 @@ namespace Paint_Crazyland
                     m_saveFile = openFileDialog1.FileName;
                     m_fileFilterIndex = openFileDialog1.FilterIndex;
                     Bitmap bmopen = new Bitmap(m_saveFile);
-                    m_bmWorkSpace = new Bitmap(bmopen);
+                    m_bmWorkSpace = new Bitmap(bmopen);                    
                     m_workSpace.Size = new Size(bmopen.Size.Width, bmopen.Size.Height);
+                    m_bmTemp = new Bitmap(m_bmWorkSpace.Width, m_bmWorkSpace.Height);
                     m_gpTemp = Graphics.FromImage(m_bmWorkSpace);
                     //Graphics gp = Graphics.FromImage(m_bmWorkSpace);
                     Graphics im = m_workSpace.CreateGraphics();
