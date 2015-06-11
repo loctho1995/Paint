@@ -1,0 +1,3 @@
+F:\Github\Paint\Paint-Crazyland\bin\Debug\Paint-Crazyland.exe.config
+F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.exe
+F:\Github\Paint\Paint-Crazyland\obj\Debug\Paint-Crazyland.pdb
