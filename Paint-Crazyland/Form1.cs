@@ -66,6 +66,10 @@ namespace Paint_Crazyland
         Stack<Bitmap> m_redo;
         //Stack<Bitmap> m_copy;
 
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            MessageBox.Show("wheel");
+        }
         #region - METHODS -
         public Form1()
         {
@@ -1912,5 +1916,7 @@ namespace Paint_Crazyland
             MessageBox.Show("PAINT\n\nĐồ án môm: Lập trình trực quan\nGiảng viên lý thuyết: Thầy Lê Thanh Trọng\nGiảng viên hướng dẫn thực hành: Thầy Huỳnh Tuấn Anh\nSinh viên thực hiện: \nLê Tấn Thịnh 13520836 \nBùi Đình Lộc Thọ 13520844","About");
         }
         #endregion
+
+
     }
 }
